@@ -58,7 +58,8 @@ md5sum *.tar > elk_dovetail_local.md5sum &
 ```
 
 
-## What is inside the Tar files
+## What is inside the tar files
+
 
 ```
 tar -tf elk_dovetail_delivery_WIL462_KF0fHeNqkz.tar
@@ -88,5 +89,13 @@ delivery_WIL462_SQND8mmmSa/north_american_elk_15Jun2018_oY8t2.report.pdf
 delivery_WIL462_SQND8mmmSa/north_american_elk_15Jun2018_oY8t2.input_breaks.txt
 delivery_WIL462_SQND8mmmSa/lib_003.sorted.md.bam
 delivery_WIL462_SQND8mmmSa/north_american_elk_15Jun2018_oY8t2.fasta.gz
-
 ```
+
+
+## Note from Darrell
+
+The Dovetail Genomics assembly improvement was performed in two separate assembly phases.  Each phase used a different type of proximity ligation data named Chicago library reads (three libraries) and Dovetail HiC reads (three libraries), respectively.  Both of these newly generated sequencing read types served as sequential inputs into the Dovetail Genomics' HiRise assembly pipeline that is specifically designed to use proximity ligation data.
+
+Two helpful metrics for evaluating the overall state of an assembly are the L90 and N90 metrics.  The L90 is the smallest number of scaffolds that comprise 90% of the total assembly.  The N90 is the is the size of the smallest scaffold such that summing the lengths of all scaffolds that size and larger equal 90% of the total assembly.  
+
+ARS supplied Dovetail Genomics with the current assembly that consisted of a total length of 2,559.8 Mb and an L90 of 2,500 scaffolds with and N90 of 0.198 Mb.  The first round of Dovetail assembly used the HiRise pipeline and the three Chicago libraries to yield a new assembly of 2,560.4 Mb, a L90 of 175 scaffolds, and a N50 of 2.292 Mb.  This first-round Dovetail assembly served as the input into the second round of assembly.  The second round of assembly used the HiRise pipeline and the three HiC libraries.  The second round of assembly yielded a final assembly of 2,560.5 Mb with a L90 of 31 scaffolds, and a N90 of 43.374 Mb.  Additionally, the longest scaffold in the original assembly was 7,681,499 bp in length, but after the two rounds of assembly improvement, the longest scaffold was 128,024,478 bp long.
