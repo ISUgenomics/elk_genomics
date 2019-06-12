@@ -99,3 +99,43 @@ The Dovetail Genomics assembly improvement was performed in two separate assembl
 Two helpful metrics for evaluating the overall state of an assembly are the L90 and N90 metrics.  The L90 is the smallest number of scaffolds that comprise 90% of the total assembly.  The N90 is the is the size of the smallest scaffold such that summing the lengths of all scaffolds that size and larger equal 90% of the total assembly.  
 
 ARS supplied Dovetail Genomics with the current assembly that consisted of a total length of 2,559.8 Mb and an L90 of 2,500 scaffolds with and N90 of 0.198 Mb.  The first round of Dovetail assembly used the HiRise pipeline and the three Chicago libraries to yield a new assembly of 2,560.4 Mb, a L90 of 175 scaffolds, and a N50 of 2.292 Mb.  This first-round Dovetail assembly served as the input into the second round of assembly.  The second round of assembly used the HiRise pipeline and the three HiC libraries.  The second round of assembly yielded a final assembly of 2,560.5 Mb with a L90 of 31 scaffolds, and a N90 of 43.374 Mb.  Additionally, the longest scaffold in the original assembly was 7,681,499 bp in length, but after the two rounds of assembly improvement, the longest scaffold was 128,024,478 bp long.
+
+
+## RNA Seq data
+
+* /home/andrew.severin/elk_bison_genomics/mRNA
+* 2019 June 12
+
+```
+tar -tf 3_4_22061_Elk-muscle_HVW3J_1422.tar
+lane3/
+lane3/Elk-lung_S26_L003_R1_001.fastq.bz2
+lane3/Elk-muscle_S21_L003_R1_001.fastq.bz2
+lane3/Elk-lung_S26_L003_R2_001.fastq.bz2
+lane3/Elk-Mes-LN_S24_L003_R2_001.fastq.bz2
+lane3/Undetermined_S0_L003_R2_001.fastq.bz2
+lane3/Elk-kidney_S25_L003_R2_001.fastq.bz2
+lane3/Elk-muscle_S21_L003_R2_001.fastq.bz2
+lane3/Elk-kidney_S25_L003_R1_001.fastq.bz2
+lane3/ElkpscapLN_S22_L003_R1_001.fastq.bz2
+lane3/Elk-spleen_S23_L003_R1_001.fastq.bz2
+lane3/Elk-spleen_S23_L003_R2_001.fastq.bz2
+lane3/Undetermined_S0_L003_R1_001.fastq.bz2
+lane3/Elk-Mes-LN_S24_L003_R1_001.fastq.bz2
+lane3/ElkpscapLN_S22_L003_R2_001.fastq.bz2
+lane4/
+lane4/Elk-lung_S26_L004_R1_001.fastq.bz2
+lane4/ElkpscapLN_S22_L004_R2_001.fastq.bz2
+lane4/Undetermined_S0_L004_R1_001.fastq.bz2
+lane4/Elk-spleen_S23_L004_R2_001.fastq.bz2
+lane4/Elk-Mes-LN_S24_L004_R2_001.fastq.bz2
+lane4/Undetermined_S0_L004_R2_001.fastq.bz2
+lane4/Elk-muscle_S21_L004_R2_001.fastq.bz2
+lane4/ElkpscapLN_S22_L004_R1_001.fastq.bz2
+lane4/Elk-spleen_S23_L004_R1_001.fastq.bz2
+lane4/Elk-muscle_S21_L004_R1_001.fastq.bz2
+lane4/Elk-kidney_S25_L004_R2_001.fastq.bz2
+lane4/Elk-lung_S26_L004_R2_001.fastq.bz2
+lane4/Elk-kidney_S25_L004_R1_001.fastq.bz2
+lane4/Elk-Mes-LN_S24_L004_R1_001.fastq.bz2
+```
