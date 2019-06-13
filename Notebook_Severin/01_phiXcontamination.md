@@ -1,5 +1,8 @@
 # Phi X contamination
 
+* 2019 June 13
+* /project/elk_bison_genomics/Severin/01_phiXcontamination
+
 Contamination from PhiX is a real problem. All assemblies should be checked.
 
 ## Download PhiX sequence from NCBI
