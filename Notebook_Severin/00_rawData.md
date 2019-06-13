@@ -172,6 +172,8 @@ perl  ~/isu_gif_vrsc/isugif/utilities/utilities/new_Assemblathon.pl
                                         Median scaffold size        391
                                          N50 scaffold length   76232311
                                           L50 scaffold count         14
+                                          n90 scaffold length   43374085
+                                          L90 scaffold count         31
                                                  scaffold %A      29.11
                                                  scaffold %C      20.86
                                                  scaffold %G      20.88
@@ -200,6 +202,8 @@ Average length of break (>25 Ns) between contigs in scaffold        297
                                           Median contig size        467
                                            N50 contig length     794616
                                             L50 contig count        921
+                                            n90 contig length     151382
+                                            L90 contig count       3646
                                                    contig %A      29.13
                                                    contig %C      20.88
                                                    contig %G      20.89
@@ -212,4 +216,26 @@ Average length of break (>25 Ns) between contigs in scaffold        297
 N50's go from 1.2M to 17.6M to 76M.  So there was a massive improvement in the genome assembly.  There must be a lot of small unplaced contigs or potentially contamination that can be removed.
 
 
-This assembly is the current best assembly **north_american_elk_15Jun2018_oY8t2.fasta**
+# This assembly is the current best assembly **north_american_elk_15Jun2018_oY8t2.fasta**
+
+
+There are 68 chromosomes in the Elk genome so what percent of the total base content is in the top 68 largest scaffolds?
+
+First we will calculate the length of all the scaffolds and sort them from largest to smallest.
+```
+perl  ~/isu_gif_vrsc/isugif/utilities/utilities/seqlen.awk north_american_elk_15Jun2018_oY8t2.fasta | sort -k 2n > north_american_elk_15Jun2018_oY8t2.len
+
+more north_american_elk_15Jun2018_oY8t2.len | sort -k 2rn | awk 'NR<35' | colsum 2
+2447876209
+
+2447876209/2558203086  = 95.7% of the sequence data is in the first 34 scaffolds!  Unfortunately, the remaining scaffolds go from 17 million bp down to 300 base pairs. Most of the chromosomes would appear to be intact with a couple broken up into arms.  there is a big drop off between 34 and 35 and then again between 37 and 38.
+
+Scaffold                  Length      ordered from highest to lowest number (L)
+ScoY8t2_418;HRSCAF=491      38474508   34
+ScoY8t2_23294;HRSCAF=23635  17980300   35
+ScoY8t2_229;HRSCAF=271      13300866   36
+ScoY8t2_256;HRSCAF=300      11732248   37
+ScoY8t2_23284;HRSCAF=23532  1664812    38
+ScoY8t2_23292;HRSCAF=23609  1268075    39
+
+```
