@@ -1,0 +1,553 @@
+src/mer_matrix.o: src/mer_matrix.cc config.h src/mer_matrix_cmdline.hpp \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/stdint.h \
+ /usr/include/stdint.h /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h /usr/include/bits/wchar.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/environments.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/stddef.h \
+ /usr/include/bits/confname.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/getopt.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
+ /usr/include/xlocale.h /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/alloca.h /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h \
+ /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/include/string.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/stdexcept \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/exception \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++config.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/os_defines.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/atomic_lockfree_defines.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/exception_ptr.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/exception_defines.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/nested_exception.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/string \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stringfwd.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/memoryfwd.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/char_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_algobase.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/functexcept.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/cpp_type_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/type_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/numeric_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_pair.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/move.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/concept_check.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/type_traits \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_iterator_base_types.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_iterator_base_funcs.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/debug/debug.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_iterator.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/postypes.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cwchar \
+ /usr/include/wchar.h /usr/include/stdio.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/stdarg.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstdint \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/allocator.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++allocator.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/new_allocator.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/new \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/localefwd.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++locale.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/clocale \
+ /usr/include/locale.h /usr/include/bits/locale.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iosfwd \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cctype \
+ /usr/include/ctype.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ostream_insert.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/cxxabi_forced.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_function.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/backward/binders.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/range_access.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_string.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/atomicity.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/gthr.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/gthr-default.h \
+ /usr/include/pthread.h /usr/include/sched.h /usr/include/bits/sched.h \
+ /usr/include/bits/setjmp.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/atomic_word.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/initializer_list \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/string_conversions.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstdlib \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstdio \
+ /usr/include/libio.h /usr/include/_G_config.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
+ /usr/include/bits/stdio.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cerrno \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/functional_hash.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/hash_bytes.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_string.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/limits \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/vector \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_construct.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/alloc_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/alloc_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ptr_traits.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_uninitialized.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_vector.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_bvector.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/vector.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iostream \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ostream \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ios \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ios_base.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_classes.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_classes.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/streambuf \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/streambuf.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_ios.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cwctype \
+ /usr/include/wctype.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/ctype_base.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/streambuf_iterator.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/ctype_inline.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_ios.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ostream.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/istream \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/istream.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/sstream \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/sstream.tcc \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/mer_dna.hpp \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iterator \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stream_iterator.h \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/misc.hpp \
+ /usr/include/inttypes.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/utility \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_relops.h \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/err.hpp \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iomanip \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/locale \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets_nonio.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ctime \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/time_members.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/messages_members.h \
+ /usr/include/libintl.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/codecvt.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets_nonio.tcc \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/thread_exec.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/stream_iterator.hpp \
+ /usr/include/assert.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/fstream \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/basic_file.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++io.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/fstream.tcc \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/memory \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_tempbuf.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_raw_storage_iter.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/typeinfo \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/concurrence.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/uses_allocator.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/functional \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/tuple \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/array \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/unique_ptr.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/shared_ptr.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/shared_ptr_base.h \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/backward/auto_ptr.h \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/whole_sequence_parser.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/cooperative_pool.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/circular_buffer.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/compare_and_swap.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/atomic_field.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/divisor.hpp \
+ /data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/locks_pthread.hpp \
+ /usr/include/sys/time.h include/jflib/multiplexed_io.hpp \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstring \
+ /data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstddef \
+ include/jflib/pool.hpp
+
+config.h:
+
+src/mer_matrix_cmdline.hpp:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/environments.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/stddef.h:
+
+/usr/include/bits/confname.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/getopt.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/bits/waitflags.h:
+
+/usr/include/bits/waitstatus.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/sys/sysmacros.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/errno.h:
+
+/usr/include/bits/errno.h:
+
+/usr/include/linux/errno.h:
+
+/usr/include/asm/errno.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/string.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/stdexcept:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/exception:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++config.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/os_defines.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/atomic_lockfree_defines.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/exception_ptr.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/exception_defines.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/nested_exception.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/string:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stringfwd.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/memoryfwd.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/char_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_algobase.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/functexcept.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/cpp_type_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/type_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/numeric_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_pair.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/move.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/concept_check.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/type_traits:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_iterator_base_types.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_iterator_base_funcs.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/debug/debug.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_iterator.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/postypes.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cwchar:
+
+/usr/include/wchar.h:
+
+/usr/include/stdio.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/stdarg.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstdint:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/allocator.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++allocator.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/new_allocator.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/new:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/localefwd.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++locale.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/clocale:
+
+/usr/include/locale.h:
+
+/usr/include/bits/locale.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iosfwd:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cctype:
+
+/usr/include/ctype.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ostream_insert.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/cxxabi_forced.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_function.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/backward/binders.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/range_access.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_string.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/atomicity.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/gthr.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/gthr-default.h:
+
+/usr/include/pthread.h:
+
+/usr/include/sched.h:
+
+/usr/include/bits/sched.h:
+
+/usr/include/bits/setjmp.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/atomic_word.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/initializer_list:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/string_conversions.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstdlib:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstdio:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/bits/sys_errlist.h:
+
+/usr/include/bits/stdio.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cerrno:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/functional_hash.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/hash_bytes.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_string.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/limits:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/vector:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_construct.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/alloc_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/alloc_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ptr_traits.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_uninitialized.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_vector.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_bvector.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/vector.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iostream:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ostream:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ios:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ios_base.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_classes.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_classes.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/streambuf:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/streambuf.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_ios.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cwctype:
+
+/usr/include/wctype.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/ctype_base.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/streambuf_iterator.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/ctype_inline.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/basic_ios.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/ostream.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/istream:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/istream.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/sstream:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/sstream.tcc:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/mer_dna.hpp:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iterator:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stream_iterator.h:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/misc.hpp:
+
+/usr/include/inttypes.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/utility:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_relops.h:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/err.hpp:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/iomanip:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/locale:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets_nonio.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ctime:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/time_members.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/messages_members.h:
+
+/usr/include/libintl.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/codecvt.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/locale_facets_nonio.tcc:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/thread_exec.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/stream_iterator.hpp:
+
+/usr/include/assert.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/fstream:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/basic_file.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/x86_64-unknown-linux-gnu/bits/c++io.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/fstream.tcc:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/memory:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_tempbuf.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/stl_raw_storage_iter.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/typeinfo:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/ext/concurrence.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/uses_allocator.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/functional:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/tuple:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/array:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/unique_ptr.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/shared_ptr.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/bits/shared_ptr_base.h:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/backward/auto_ptr.h:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/whole_sequence_parser.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/cooperative_pool.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/circular_buffer.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/compare_and_swap.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/atomic_field.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/divisor.hpp:
+
+/data006c/GIF_2c/BCB660/DATA/BioBlitz/JellyFishMatrix/jellyfish-2.0.0beta4/include/jellyfish-2.0.0beta4/jellyfish/locks_pthread.hpp:
+
+/usr/include/sys/time.h:
+
+include/jflib/multiplexed_io.hpp:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstring:
+
+/data004/software/GIF/GIF/programs/gcc-4.8.0/include/c++/4.8.0/cstddef:
+
+include/jflib/pool.hpp:

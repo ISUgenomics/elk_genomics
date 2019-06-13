@@ -1,0 +1,12 @@
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+[1] 28668 28669 28670 28671 28672 28673 28674 28675 28676
+[2] 28677 28678 28679 28680 28681 28682 28683 28684 28685
+[2]    Done                          cat TrinityGtr299.fasta.300sliding.3mer | perl -pe s/scaffold(-.*-[0-9]*)/>scaffold\1\n/g | tr   \n | grep . | awk ($1==0) {print "A"} ($1==1) {print "C"} ($1==2) {print "D"} ($1==3) {print "E"} ($1==4) {print "F"} ($1==5) {print "G"} ($1==6) {print "H"} ($1==7) {print "I"} ($1==8) {print "K"} ($1==9) {print "L"} ($1==10) {print "M"} ($1==11) {print "N"} ($1==12) {print "P"} ($1==13) {print "Q"} ($1==14) {print "R"} ($1==15) {print "S"} ($1==16) {print "T"} ($1==17) {print "V"} ($1==18) {print "W"} ($1>18) {print "Y"} ($1~"scaffold"){print $0"newline"} | perl -pe s/\n//g |
+       Exit 255                      perl -pe s/newline/\n/g |
+       Done                          perl -pe s/>/\n>/g | awk NR>1 > TrinityGtr299.fasta.300sliding.3mer.translated
+[1]  + Done                          cat Gmax_189_cds.Gtr299.fasta.300sliding.3mer | perl -pe s/Glyma(-.*-[0-9]*)/>Glyma\1\n/g | tr   \n | grep . | awk ($1==0) {print "A"} ($1==1) {print "C"} ($1==2) {print "D"} ($1==3) {print "E"} ($1==4) {print "F"} ($1==5) {print "G"} ($1==6) {print "H"} ($1==7) {print "I"} ($1==8) {print "K"} ($1==9) {print "L"} ($1==10) {print "M"} ($1==11) {print "N"} ($1==12) {print "P"} ($1==13) {print "Q"} ($1==14) {print "R"} ($1==15) {print "S"} ($1==16) {print "T"} ($1==17) {print "V"} ($1==18) {print "W"} ($1>18) {print "Y"} ($1~"Glyma"){print $0"newline"} | perl -pe s/\n//g | perl -pe s/newline/\n/g | perl -pe s/Glyma/\n>Glyma/g | awk NR>1 > Gmax_189_cds.Gtr299.fasta.300sliding.3mer.translated
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+[1] 16955 16956 16957 16958 16959 16960 16961 16962 16963
+[2] 16964 16965 16966 16967 16968 16969 16970 16971 16972
