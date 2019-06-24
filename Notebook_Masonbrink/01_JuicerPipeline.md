@@ -156,4 +156,14 @@ sed -i 's/96:00:00/48:00:00/g' job2.sh
 #had time to wait for the masked genome, so just ran as is without split
 sbatch job2.sh
 
+
+#job5.sh needs few mods, time, and path to countligations.sh
+sed -i 's/96:00:00/48:00:00/g' job5.sh
+
+#count countligations.sh was in path, removing faulty path
+#/gpfs0/juicer//scripts/countligations.sh
+countligations.sh
+
+
+
 ```
