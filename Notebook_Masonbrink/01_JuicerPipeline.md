@@ -58,9 +58,9 @@ samtools flagstat -@ 40 lib_002.sorted.md.bam
 
 for f in *bam ; do echo "module load picard/64/2.9.2; java -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I="$f" FASTQ="${f%.*}"R1.fq F2="${f%.*}"R2.fq FU="${f%.*}"_unpaired.fq" ;done >picard.sh
 #######################################################################################
- module load picard/64/2.9.2; java -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_001.sorted.md.bam FASTQ=lib_001.sorted.mdR1.fq F2=lib_001.sorted.mdR2.fq FU=lib_001.sorted.md_unpaired.fq
-module load picard/64/2.9.2; java -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_002.sorted.md.bam FASTQ=lib_002.sorted.mdR1.fq F2=lib_002.sorted.mdR2.fq FU=lib_002.sorted.md_unpaired.fq
-module load picard/64/2.9.2; java -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_003.sorted.md.bam FASTQ=lib_003.sorted.mdR1.fq F2=lib_003.sorted.mdR2.fq FU=lib_003.sorted.md_unpaired.fq
+ module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_001.sorted.md.bam FASTQ=lib_001.sorted.mdR1.fq F2=lib_001.sorted.mdR2.fq FU=lib_001.sorted.md_unpaired.fq
+module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_002.sorted.md.bam FASTQ=lib_002.sorted.mdR1.fq F2=lib_002.sorted.mdR2.fq FU=lib_002.sorted.md_unpaired.fq
+module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_003.sorted.md.bam FASTQ=lib_003.sorted.mdR1.fq F2=lib_003.sorted.mdR2.fq FU=lib_003.sorted.md_unpaired.fq
 #######################################################################################
 
 ```
@@ -107,19 +107,53 @@ RepeatMasker -pa 40  -gff -lib consensi.fa.classified ${GENOME}
 #chromosome sizes file
 awk '/^>/ {if (seqlen){print seqlen}; print ;seqlen=0;next; } { seqlen = seqlen +length($0)}END{print seqlen}' ../north_american_elk_15Jun2018_oY8t2.fasta |tr "\n" "\t" |sed 's/>/\n/g' >chrom.sizes
 
+#need this guy for sorting
 mkdir HIC_tmp
-mkdir fastq
 
+#softlink fastq
+mkdir fastq
+cd fastq
+for f in ../../01_ExtractFastq/*mdR*fq; do ln -s $f;done
+
+
+#softlink and index references
 mkdir references
 cd references
+ln -s ../north_american_elk_15Jun2018_oY8t2.fasta
 module load bwa;bwa index ../north_american_elk_15Jun2018_oY8t2.fasta
 cd ..
 
+
+#get your proper restriction enzyme for a fragment delimited map
 mkdir restriction
 cd restriction
 vi generate_site_positions.py
 module load juicer
 python generate_site_positions.py DpnII north_american_elk_15Jun2018_oY8t2.fasta ../north_american_elk_15Jun2018_oY8t2.fasta
 cd ..
+
+#get modified juicer script
+cp ../02_TestJuicer/new_Juicer.sh .
+
+#softlink and rename according to "*_R*", the fastq files to the appropriate format for juicer
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/fastq
+for f in ../../01_ExtractFastq/*fq; do echo "ln -s "$f" "${f%.*}".fastq" ;done |sed 's|../../01_ExtractFastq/||2' |sed 's/.mdR/_R/2' |less
+###############################################################################
+ln -s ../../01_ExtractFastq/lib_001.sorted.mdR1.fq lib_001.sorted_R1.fastq
+ln -s ../../01_ExtractFastq/lib_001.sorted.mdR2.fq lib_001.sorted_R2.fastq
+ln -s ../../01_ExtractFastq/lib_002.sorted.mdR1.fq lib_002.sorted_R1.fastq
+ln -s ../../01_ExtractFastq/lib_002.sorted.mdR2.fq lib_002.sorted_R2.fastq
+ln -s ../../01_ExtractFastq/lib_003.sorted.mdR1.fq lib_003.sorted_R1.fastq
+ln -s ../../01_ExtractFastq/lib_003.sorted.mdR2.fq lib_003.sorted_R2.fastq
+###############################################################################
+
+new_Juicer.sh -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_DpnII.txt -q short -Q 48:00:00 -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes -t 40
+
+#job1.sh just prints the version numberss of the software -- skipped
+
+#modify and split job2.sh
+sed -i 's/96:00:00/48:00:00/g' job2.sh
+#had time to wait for the masked genome, so just ran as is without split
+sbatch job2.sh
 
 ```
