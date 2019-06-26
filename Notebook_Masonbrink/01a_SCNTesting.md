@@ -93,10 +93,12 @@ awk -v "fname1"=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuice
 for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_abnorm.sam"; done >createSamSubsets.sh
 for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_unmapped.sam"; done >>createSamSubsets.sh
 for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_norm.txt"; done >>createSamSubsets.sh
+sh createSamSubsets.sh
 
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/splits
 paste <(ls -1 *norm.txt ) <(ls -1 *abnorm.sam ) <(ls -1 *unmapped.sam ) <(ls -1 *1merge.sam)|while read a b c d; do echo "awk -v \"fname1\"="$a" -v \"fname2\"="$b" -v \"fname3\"="$c"
  -f /software/7/apps/juicer/1.6.2/scripts/chimeric_blacklist.awk "$f;done >chimericReadAlignments
+ sh chimericReadAlignments
 
 
 #do something with the fragment delimitation
@@ -105,7 +107,7 @@ paste <(ls -1 *norm.txt ) <(ls -1 *abnorm.sam ) <(ls -1 *unmapped.sam ) <(ls -1 
 
 ##############################################################################################
 
-for f in *norm.txt; do echo "/software/7/apps/juicer/1.6.2/scripts/fragment.pl "$f" "${f%.*}".frag.txt restriction_sites/MisAssFixed.Pilon.fasta_DpnII.txt" ;done |sed 's/_norm//2' >frags.sh
+for f in *norm.txt; do echo "/software/7/apps/juicer/1.6.2/scripts/fragment.pl "$f" "${f%.*}".frag.txt ../restriction_sites/MaskedMisAssFixed.Pilon.fasta_DpnII.txt" ;done |sed 's/_norm//2' >frags.sh
 
 # sort by chromosome, fragment, strand, and position
 #####################################################################################################################################################################################################################

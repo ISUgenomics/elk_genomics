@@ -119,8 +119,8 @@ for f in ../../01_ExtractFastq/*mdR*fq; do ln -s $f;done
 #softlink and index references
 mkdir references
 cd references
-ln -s ../north_american_elk_15Jun2018_oY8t2.fasta
-module load bwa;bwa index ../north_american_elk_15Jun2018_oY8t2.fasta
+ln -s ../../03_repeatmodeler/north_american_elk_15Jun2018_oY8t2.fasta.masked
+module load bwa;bwa index ../north_american_elk_15Jun2018_oY8t2.fasta.masked
 cd ..
 
 
@@ -150,8 +150,9 @@ ln -s ../../01_ExtractFastq/lib_003.sorted.mdR2.fq lib_003.sorted_R2.fastq
 new_Juicer.sh -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_DpnII.txt -q short -Q 48:00:00 -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes -t 40
 
 #job1.sh just prints the version numberss of the software -- skipped
-
-#modify and split job2.sh
+```
+### modify and split job2.sh
+```
 sed -i 's/96:00:00/48:00:00/g' job2.sh
 #had time to wait for the masked genome, so just ran as is without split
 sbatch job2.sh
@@ -163,7 +164,4 @@ sed -i 's/96:00:00/48:00:00/g' job5.sh
 #count countligations.sh was in path, removing faulty path
 #/gpfs0/juicer//scripts/countligations.sh
 countligations.sh
-
-
-
 ```
