@@ -116,5 +116,15 @@ sort -S 2G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/
 
 for f in *frag.txt; do echo "sort -S 110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n "$f" > "${f%.*}".fastq.sort.txt" ;done >sortByChromFragStrandPos.sh
 
+```
+### job9 and job10 merge all the sorted sort.txt files
+```
+#job9 just checks to see if the sorts finished
+#job10 merges all the sorted files
+##############################################################################################################################
+sort --parallel=2 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -m -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/splits/*.sort.txt > /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned/merged_sort.txt
+###############################################################################################################################
+
+echo "sort --parallel=40 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -m -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/splits/*.sort.txt > /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned/merged_sort.txt" >mergeAllSort.sh
 
 ```
