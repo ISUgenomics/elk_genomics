@@ -128,3 +128,12 @@ sort --parallel=2 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/
 echo "sort --parallel=40 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -m -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/splits/*.sort.txt > /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned/merged_sort.txt" >mergeAllSort.sh
 
 ```
+
+### job11 and job12 -- job11 is essentially empty, ut job12 is the deduplication of reads.
+```
+awk -v queue=long -v groupname=a1560892488 -v debugdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/debug -v dir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned -v topDir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer -v  juicedir=/software/7/apps/juicer/1.6.2/scripts/ -v site=DpnII -v genomeID=SCN -v genomePath=chrom.sizes -v user=rick.masonbrink -v guardjid="a1560892488_dedup_guard" -f /software/7/apps/juicer/1.6.2/scripts/split_rmdups.awk /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned/merged_sort.txt
+
+#THIS ACTUALLY WORKS WITHOUT MODIFICATION.  submit the above to a 48 hr node, and change the split_rmdups.awk script to submit to short nodes
+
+
+```
