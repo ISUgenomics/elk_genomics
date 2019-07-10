@@ -173,3 +173,103 @@ countligations.sh
 #this is just aligning the reads
 for f in *fastq ;do echo "module load bwa; module load juicer; bwa mem -t 40 ../references/north_american_elk_15Jun2018_oY8t2.fasta.masked "$f" > "$f".sam";done >align.sh
 ```
+
+### job8.sh
+```
+#sort the sam files
+for f in *sam; do echo " sort --parallel=40 -S 110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -k1,1 "$f" > "${f%.*}"_sort.sam";done  >sortsam.sh
+
+#add read ends to the sam file read names
+for f in splits/*_R1*_sort.sam ;do echo "awk 'NF >= 11{\$1 = \$1\"/1\";print}' "$f" > "${f%.*}"1.sam";done >addReadEnds.sh
+for f in splits/*_R2*_sort.sam ;do echo "awk 'NF >= 11{\$1 = \$1\"/2\";print}' "$f" > "${f%.*}"1.sam";done >>addReadEnds.sh
+
+#merge the sam files
+ paste <(ls -1 *R1*.fastq_sort1.sam ) <(ls -1 *R2*.fastq_sort1.sam ) |while read a b; do echo "sort --parallel=40 -S 110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -k1,1 -m " $a" "$b" > "${a%.*}merge.sam; done > merge.sh
+
+
+ #Create the empty files and find the chimeric read alignments
+for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_abnorm.sam"; done >createSamSubsets.sh
+for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_unmapped.sam"; done >>createSamSubsets.sh
+for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_norm.txt"; done >>createSamSubsets.sh
+sh createSamSubsets.sh
+
+#call chimeric reads in teh dataset
+paste <(ls -1 *norm.txt ) <(ls -1 *abnorm.sam ) <(ls -1 *unmapped.sam ) <(ls -1 *1merge.sam)|while read a b c d; do echo "awk -v \"fname1\"="$a" -v \"fname2\"="$b" -v \"fname3\"="$c"  -f /software/7/apps/juicer/1.6.2/scripts/chimeric_blacklist.awk "$d;done >chimericReadAlignments
+sh chimericReadAlignments
+
+# something with the restriction fragment file, runs super fast
+for f in *norm.txt; do echo "/software/7/apps/juicer/1.6.2/scripts/fragment.pl "$f" "${f%.*}".frag.txt ../restriction_sites/north_american_elk_15Jun2018_oY8t2.fasta_DpnII.txt" ;done |sed 's/_norm//2' >frags.sh
+
+# sort by chromosome, fragment, strand, and position
+for f in *frag.txt; do echo "sort -S 110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n "$f" > "${f%.*}".fastq.sort.txt" ;done >sortByChromFragStrandPos.sh
+
+#merge the sort.txt files into a single file
+echo "sort --parallel=40 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -m -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/splits/*.sort.txt > /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/merged_sort.txt" >mergeAllSort.sh
+
+awk -v queue=long -v groupname=a1560892488 -v debugdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/debug -v dir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned -v topDir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk -v  juicedir=/software/7/apps/juicer/1.6.2/scripts/ -v site=DpnII -v genomeID=Elk -v genomePath=chrom.sizes -v user=rick.masonbrink -v guardjid="a1560892488_dedup_guard" -f /software/7/apps/juicer/1.6.2/scripts/split_rmdups.awk /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/merged_sort.txt
+```
+
+### 3ddna assembly and installation
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA
+module load miniconda
+conda create 3d-dna
+conda create -n 3d-dna
+source activate 3d-dna
+git clone https://github.com/lastz/lastz.git
+cd lastz/
+# changed the install directory to one up from current
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA
+cd src/
+make
+make install
+make test
+
+pip install numpy
+pip install numpy --user
+pip install scipy --user
+pip install matplotlib --user
+
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA
+git clone https://github.com/theaidenlab/3d-dna.git
+PATH=$PATH:/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/lastz/
+PATH=$PATH:/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna
+
+module load miniconda
+source activate 3d-dna
+module load java
+module load parallel
+cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna
+bash run-asm-pipeline.sh /home/rick.masonbrink/elk_bison_genomics/Masonbrink/north_american_elk_15Jun2018_oY8t2.fasta /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/merged_nodups.txt
+
+
+#java error, had a couple reads that had coordinates off of the end of the chromosome.  removed.
+#java error says this scaffold is the culprit. moving to new file
+grep "ScoY8t2_23286\;HRSCAF\=23550" ../aligned/merged_nodups.txt >scaffScoY8t2_23286
+
+#aiden form says reads can be mapping off of the scaffolds, these need removed.  some random error with bwa?
+#are there any?
+grep "ScoY8t2_23286\;HRSCAF\=23550" ../aligned/merged_nodups.txt >scaffScoY8t2_23286
+awk '{if($2=="ScoY8t2_23286;HRSCAF=23550" && $3>115005250){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7>115005250){next } else {print $0}}' scaffScoY8t2_23286 >fixedscafScoY8t2_23286
+
+#fixed count
+(bioawk) [rick.masonbrink@sn-cn-20-3 01_3DNA]$ wc -l fixedscafScoY8t2_23286
+6700402 fixedscafScoY8t2_23286
+#old count
+(bioawk) [rick.masonbrink@sn-cn-20-3 01_3DNA]$ wc -l scaffScoY8t2_23286
+6700404 scaffScoY8t2_23286
+
+#apply this to merged_nodups.txt
+awk '{if($2=="ScoY8t2_23286;HRSCAF=23550" && $3>115005250){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7>115005250){next } else {print $0}}' merged_nodups.txt >fixedmerged_nodups.txt
+
+
+#rerun 3d-dna
+
+module load miniconda
+source activate 3d-dna
+module load java
+module load parallel
+cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna
+bash run-asm-pipeline.sh /home/rick.masonbrink/elk_bison_genomics/Masonbrink/north_american_elk_15Jun2018_oY8t2.fasta /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/fixedmerged_nodups.txt
+
+```
