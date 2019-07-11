@@ -272,4 +272,65 @@ module load parallel
 cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna
 bash run-asm-pipeline.sh /home/rick.masonbrink/elk_bison_genomics/Masonbrink/north_american_elk_15Jun2018_oY8t2.fasta /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/fixedmerged_nodups.txt
 
+
+#no go.
+Try again
+awk '{if($2=="ScoY8t2_23286;HRSCAF=23550") {print $3} else if($6=="ScoY8t2_23286;HRSCAF=23550"){print $7 } else {next}}' merged_nodups.txt |sort |uniq -c |sort -k2,2nr |tail
+      8 1362
+      1 1361
+      2 1360
+     39 1359
+      1 1356
+      1 1355
+      1 1354
+      1 1353
+      3 1352
+      1 1351
+[rick.masonbrink@sn-cn-22-0 aligned]$ awk '{if($2=="ScoY8t2_23286;HRSCAF=23550") {print $3} else if($6=="ScoY8t2_23286;HRSCAF=23550"){print $7 } else {next}}' merged_nodups.txt |sort |uniq -c |sort -k2,2nr |head
+      1 115005254
+      1 115005252
+      2 115005250
+      2 115005238
+      1 115005236
+      1 115005235
+      1 115005221
+      1 115005216
+      1 115005211
+      1 115005209
+ awk '{if($2=="ScoY8t2_23286;HRSCAF=23550") {print $3} else if($6=="ScoY8t2_23286;HRSCAF=23550"){print $7 } else {next}}' merged_nodups.txt |sort |uniq -c |sort -k1,1nr |head
+  37378 9290251
+  34265 41362900
+  29150 19388140
+  25922 9288883
+  21454 5228452
+  19680 19388117
+  19124 19388038
+  15615 9290155
+  15155 9289093
+  11243 26246534
+
+
+#stats from another large scaffold
+awk '{if($2=="ScoY8t2_329;HRSCAF=386") {print $3} else if($6=="ScoY8t2_329;HRSCAF=386"){print $7 }
+ else {next}}' merged_nodups.txt |sort |uniq -c |sort -k1,1nr |head
+   2832 65883156
+   1112 14005317
+   1077 8335593
+    970 39151896
+    957 65883139
+    796 8335576
+    329 47970340
+    317 47970348
+    288 47970357
+    281 6407397
+
+
+It is likely that ScoY8t2_23286;HRSCAF=23550 has too much depth.  I will remove some of the entries, only those found in column 2 and 3.  Leaving col 6 and 7 alone.  
+awk '{if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9290251) {next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==41362900){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==19388140){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9288883){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==5228452){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==19388117){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==19388038){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9290155){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9289093){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==26246534){next} else {print}}' merged_nodups.txt >fixedmerged_nodups.txt
+#this did not remove enough reads, adding col 6 and 7 to the removal
+awk '{if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9290251) {next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==41362900){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==19388140){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9288883){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==5228452){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==19388117){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==19388038){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9290155){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9289093){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==26246534){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==9290251) {next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==41362900){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==19388140){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==9288883){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==5228452){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==19388117){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==19388038){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==9290155){next} else if($6=="ScoY8t2_23286;HRSCAF=23550" && $7==9289093){next} else if($2=="ScoY8t2_23286;HRSCAF=23550" && $7==26246534){next} else {print}}' merged_nodups.txt >fixedmerged_nodups.txt
+
+#this was not complete also.  I checked to see if the merged_nodups.txt file had lines with 16 fields.  One line did not have 16 fields
+awk 'NR!=72954653' fixedmerged_nodups.txt >fixed2merged_nodups.txt
+
 ```
