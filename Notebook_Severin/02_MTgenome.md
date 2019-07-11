@@ -67,7 +67,7 @@ blastn  -db ../01_phiXcontamination/elk_blastDB -query 9880_ref_Ovir.te_1.0_chrM
 
 #### Best candidates for the MT genome
 
-It looks like there are several scafolds that could be the MT genome and it appears that it may have rolling assembled so we will need to manually fix that.  The best candidates so far are **ScoY8t2_238;HRSCAF=281** and ScoY8t2_401;HRSCAF=471
+It looks like there are several scaffolds that could be the MT genome and it appears that it may have rolling assembled so we will need to manually fix that.  The best candidates so far are **ScoY8t2_238;HRSCAF=281** and **ScoY8t2_401;HRSCAF=471**
 
 ```
 scaffold                length
