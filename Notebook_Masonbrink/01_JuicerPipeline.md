@@ -337,4 +337,7 @@ awk '{if($2=="ScoY8t2_23286;HRSCAF=23550" && $3==9290251) {next} else if($2=="Sc
 #this was not complete also.  I checked to see if the merged_nodups.txt file had lines with 16 fields.  One line did not have 16 fields
 awk 'NR!=72954653' fixedmerged_nodups.txt >fixed2merged_nodups.txt
 
+#this fixed the issue, but I still have issues with the presentation of all intrachromosomal contacts in JBAT, likely due to a mismatched restriction fragment file.  7/12/19
+
+
 ```
