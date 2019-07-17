@@ -197,16 +197,20 @@ sh createSamSubsets.sh
 paste <(ls -1 *norm.txt ) <(ls -1 *abnorm.sam ) <(ls -1 *unmapped.sam ) <(ls -1 *1merge.sam)|while read a b c d; do echo "awk -v \"fname1\"="$a" -v \"fname2\"="$b" -v \"fname3\"="$c"  -f /software/7/apps/juicer/1.6.2/scripts/chimeric_blacklist.awk "$d;done >chimericReadAlignments
 sh chimericReadAlignments
 
-# something with the restriction fragment file, runs super fast
+# something with the restriction fragment file
 for f in *norm.txt; do echo "/software/7/apps/juicer/1.6.2/scripts/fragment.pl "$f" "${f%.*}".frag.txt ../restriction_sites/north_american_elk_15Jun2018_oY8t2.fasta_DpnII.txt" ;done |sed 's/_norm//2' >frags.sh
+
+###rerunning the above step
+for f in *norm.txt; do echo "/software/7/apps/juicer/1.6.2/scripts/fragment.pl "$f" "${f%.*}".frag.txt ../restriction_sites/north_american_elk_15Jun2018_oY8t2.fasta.masked_DpnII.txt" ;done |sed 's/_norm//2' >frags.sh
 
 # sort by chromosome, fragment, strand, and position
 for f in *frag.txt; do echo "sort -S 110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n "$f" > "${f%.*}".fastq.sort.txt" ;done >sortByChromFragStrandPos.sh
+ ###
 
 #merge the sort.txt files into a single file
 echo "sort --parallel=40 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/HIC_tmp -m -k2,2d -k6,6d -k4,4n -k8,8n -k1,1n -k5,5n -k3,3n /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/splits/*.sort.txt > /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/merged_sort.txt" >mergeAllSort.sh
 
-awk -v queue=long -v groupname=a1560892488 -v debugdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/debug -v dir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned -v topDir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk -v  juicedir=/software/7/apps/juicer/1.6.2/scripts/ -v site=DpnII -v genomeID=Elk -v genomePath=chrom.sizes -v user=rick.masonbrink -v guardjid="a1560892488_dedup_guard" -f /software/7/apps/juicer/1.6.2/scripts/split_rmdups.awk /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/merged_sort.txt
+awk -v queue=long -v groupname=a1560892488 -v debugdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/debug -v dir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned -v topDir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk -v  juicedir=/software/7/apps/juicer/1.6.2 -v site=DpnII -v genomeID=Elk -v genomePath=chrom.sizes -v user=rick.masonbrink -v guardjid="a1560892488_dedup_guard" -f split_rmdups.awk /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/merged_sort.txt
 ```
 
 ### 3ddna assembly and installation
