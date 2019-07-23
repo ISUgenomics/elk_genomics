@@ -5,7 +5,7 @@
 
 ## 2019 publications
 
-|  Title of paper( and link)| spices | Journal (IF) | genome size (chromosome number) | assembler| wet lab followup | quality of assembly |
+|  Title of paper( and link)| species | Journal (IF) | genome size (chromosome number) | assembler| wet lab followup | quality of assembly |
 | --- | --- | --- |  --- | --- | --- | --- |
 | [Draft Genome Assembly of the False Spider Mite Brevipalpus yothersi](https://mra.asm.org/content/8/6/e01563-18.full) | The false spider mite B. yothersi | Microbiology Resource Announcements (?) | 72Mb MiSeq| Newbler 2.9.1/SSpace 2.0| no |  |
 | [Chromosomal genome assembly of the ethanol production strain CBS 11270 indicates a highly dynamic genome structure in the yeast species Brettanomyces bruxellensis ** ](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0215077) | industrial ethanol production strain Brettanomyces bruxellensis CBS 11270| PLOS ONE (2.776)|  | See bellow|  |
@@ -15,13 +15,54 @@
 |[Genome assembly of a tropical maize inbred line provides insights into structural variation and crop improvement](https://www.nature.com/articles/s41588-019-0427-6)| Maize| Nature genetics(27.125) | 2.32 Gb |FALCON | no | contig N50 =15.78 Mb |
 |[Hybrid genome assembly and annotation of Danionella translucida](https://www.biorxiv.org/content/10.1101/539692v2.abstract)| Danionella translucida| bioRxiv | 750 Mb | Macurca | no |  N50 =341kb |
 | [The Chromosome-Level Genome Assembly of European Grayling Reveals Aspects of a Unique Genome Evolution Process Within Salmonids](https://www.g3journal.org/content/9/5/1283.full)| Salmonids | G3, Genes, Genomes, Genetics (2.742) | | Canu |  no| N50=390kb|  
+| [Data on the genome analysis of the wild edible mushroom, Russula griseocarnosa](https://www.sciencedirect.com/science/article/pii/S2352340919306493) | wild edible mushroom | Data in Brief (0.85) | 64.81 Mb | Canu | no | |
+
 
 
 ### PLOS and Frontier whole genome publications:
 
-|  Title of paper( and link)| spices | Journal (IF) | genome size (chromosome number) | assembler| wet lab followup | quality of assembly |
+|  Title of paper( and link)| species | Journal (IF) | genome size (chromosome number) | assembler| wet lab followup | quality of assembly |
 | --- | --- | --- |  --- | --- | --- | --- |
-|[Genome sequencing and transcript analysis of Hemileia vastatrix reveal expression dynamics of candidate effectors dependent on host compatibility](https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0215598&type=printable) | Hemileia vastatrix (fungus)| PLOS ONE|  | SOAP/HGAP/CLC hybrid| no | N50=9.9 kb|
+|[Genome sequencing and transcript analysis of Hemileia vastatrix reveal expression dynamics of candidate effectors dependent on host compatibility](https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0215598&type=printable) | Hemileia vastatrix (fungus)| PLOS ONE|  | SOAP/HGAP/CLC hybrid| no | N50=9.9 kb| Canu  |
 |[Genomic content of a novel yeast species Hanseniaspora gamundiae sp. nov. from fungal stromata (Cyttaria) associated with a unique fermented beverage in Andean Patagonia, Argentina](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0210792)| fungal stromata (Hanseniaspora gamundiae type strain CRUB 1928T) | PLOS ONE | 10.2 Mbp| Spade | no|  N50=63 kb|
 |[Whole-genome sequence of the bovine blood fluke Schistosoma bovis supports interspecific hybridization with S. haematobium](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1007513) |Schistosoma bovis  | PLOS pathogens (6.158) |  374 Mb | SOAPdenovo2 | no| N50=203kb|
 |[Complete Assembly of the Genome of an Acidovorax citrulli Strain Reveals a Naturally Occurring Plasmid in This Species](https://www.frontiersin.org/articles/10.3389/fmicb.2019.01400/full) |  Acidovorax citrulli  (bacteria) | Frontiers in Microbiology| 4.8 Mb| Canu| no |N50 = 19 kb|
+
+
+
+## Type of analysis done in publications
+
+* Annotation
+* Repeat analysis
+* SNP analysis
+* Gene Copy analysis
+* Comparative analysis of genome assemblies
+* Comparative analysis of gene content
+* Genome structure
+
+* Sequence contiguity assessment
+* Resolution of longer repeats
+
+### Maize
+* Functional enrichment analysis
+* ceRNA network construction
+
+### Salmonids
+* Repeat library construction
+* Repeat element assessment
+* Predicting centromere locations using the location of repeats
+* Identification of sex Chromosome
+* Comparison with other genomes
+
+### Fungus
+* Secretome analysis
+* Transcriptional analysis of potential effector proteins
+
+### Fungal Stromata
+* Genomic diversity
+* Physiological characteristics & correlation to genome content
+* Taxonomy
+
+### Mushroom
+* GO function annotation
+* KEGG function annotation
