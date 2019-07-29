@@ -339,5 +339,6 @@ awk 'NR!=72954653' fixedmerged_nodups.txt >fixed2merged_nodups.txt
 
 #this fixed the issue, but I still have issues with the presentation of all intrachromosomal contacts in JBAT, likely due to a mismatched restriction fragment file.  7/12/19
 
-
+#this issue is because the mapping information does not have a mapping site for restriction fragments in some chromosomes.  Just changing all values to dummy values, since I have only interest in assembly and 3d-dna is not using the fragment map
+awk '{$8="1";$4="0";print $0}' fixed2merged_nodups.txt >fixed3merged_nodups.txt
 ```
