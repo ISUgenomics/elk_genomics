@@ -219,7 +219,7 @@ N50's go from 1.2M to 17.6M to 76M.  So there was a massive improvement in the g
 # This assembly is the current best assembly **north_american_elk_15Jun2018_oY8t2.fasta**
 
 
-There are 68 chromosomes in the Elk genome so what percent of the total base content is in the top 68 largest scaffolds?
+There are 34 chromosomes in the Elk genome so what percent of the total base content is in the top 34 largest scaffolds?
 
 First we will calculate the length of all the scaffolds and sort them from largest to smallest.
 ```
