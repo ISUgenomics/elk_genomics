@@ -1,0 +1,7 @@
+## 1.1.1
+## bam0=/project/elk_bison_genomics/Masonbrink/07_blobtools2juiced/FirstScaffoldsStep0.FINAL.AllFastq_sorted.bam
+# name	colour	count_visible	count_visible_perc	span_visible	span_visible_perc	n50	gc_mean	gc_std	bam0_mean	bam0_std	bam0_read_map	bam0_read_map_p
+all	None	22,577	100.0%	2,560,751,668	100.0%	77,667,674	0.52	0.064	20.5	212.8	4,872,063	42.5%
+Chordata	#1f77b4	21,895	100.0%	2,507,791,309	100.0%	77,667,674	0.52	0.062	21.0	216.1	4,781,527	41.7%
+no-hit	#d3d3d3	396	100.0%	51,716,122	100.0%	51,446,134	0.49	0.1	0.8	3.1	87,606	0.8%
+Nematoda	#ff7f0e	286	100.0%	1,244,237	100.0%	22,730	0.42	0.078	7.2	41.8	2,930	0.0%
