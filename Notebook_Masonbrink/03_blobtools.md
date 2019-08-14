@@ -142,6 +142,10 @@ mkdir -p blobplot_blobs
 ###############################################################################
 sh runBlobtools.sh
 ```
+![blobplot_1_1](assets/blobplot_1_1.png)
+![blobplot_1_2](assets/blobplot_1_2.png)
+![blobstats_1_1](assets/blobstats_1_1.txt)
+![blobstats_1_2](assets/blobstats_1_2.txt)
 
 ### Post analysis
 ```
@@ -159,8 +163,3 @@ Median: 360
 Min:    119
 Max:    8,167
 ```
-
-![blobplot_1_1](assets/blobplot_1_1.png)
-![blobplot_1_2](assets/blobplot_1_2.png)
-![blobstats_1_1](assets/blobstats_1_1.png)
-![blobstats_1_2](assets/blobstats_1_2.png)
