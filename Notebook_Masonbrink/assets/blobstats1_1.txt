@@ -1,0 +1,9 @@
+## 1.1.1
+## bam0=/project/elk_bison_genomics/Masonbrink/06_blobtools/SecondRun.bam
+# name	colour	count_visible	count_visible_perc	span_visible	span_visible_perc	n50	gc_mean	gc_std	bam0_mean	bam0_std	bam0_read_map	bam0_read_map_p
+all	None	23,302	100.0%	2,560,463,354	100.0%	76,232,311	0.52	0.063	22.4	223.2	4,872,020	42.5%
+Chordata	#1f77b4	21,373	100.0%	2,544,602,053	100.0%	77,530,084	0.52	0.058	22.8	231.0	4,735,522	41.3%
+Nematoda	#ff7f0e	1,055	100.0%	11,078,202	100.0%	20,727	0.41	0.055	28.2	137.3	125,334	1.1%
+no-hit	#d3d3d3	871	100.0%	4,781,636	100.0%	13,377	0.49	0.069	4.8	7.8	11,164	0.1%
+Apicomplexa	#d62728	2	100.0%	1,041	100.0%	532	0.42	0.0022	0.1	0.0	0	0.0%
+unresolved	#9467bd	1	100.0%	422	100.0%	422	0.43	0.0	0.1	0.0	0	0.0%
