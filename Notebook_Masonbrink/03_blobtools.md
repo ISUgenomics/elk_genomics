@@ -146,20 +146,3 @@ sh runBlobtools.sh
 ![blobplot_1_2](assets/blobplot_1_2.png)
 ![blobstats_1_1](assets/blobstats_1_1.txt)
 ![blobstats_1_2](assets/blobstats_1_2.txt)
-
-### Post analysis
-```
-#How many scaffolds do not have any subread coverage?
-less blobplot_out.FirstScaffoldsStep0.FINAL.AllFastq_sorted.bam.cov |awk '$2==0'  >ZeroCovScaffs
-wc ZeroCovScaffs
- 12,959
-
-#How large are the scaffolds with zero coverage
-less ZeroCovScaffs |awk '{print $1}' |while read line; do samtools faidx 01_MegaBlast/FirstScaffoldsStep0.FINAL.fasta $line; done |bioawk -c fastx '{print length($seq)}' |summary.sh
-^[[C^[[CTotal:  5,984,603
-Count:  12,959
-Mean:   461
-Median: 360
-Min:    119
-Max:    8,167
-```

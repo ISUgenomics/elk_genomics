@@ -96,8 +96,8 @@ for f in *sort1merge.sam;do echo "touch "${f%.*}".fastq_norm.txt"; done >>create
 sh createSamSubsets.sh
 
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/splits
-paste <(ls -1 *norm.txt ) <(ls -1 *abnorm.sam ) <(ls -1 *unmapped.sam ) <(ls -1 *1merge.sam)|while read a b c d; do echo "awk -v \"fname1\"="$a" -v \"fname2\"="$b" -v \"fname3\"="$c"
- -f /software/7/apps/juicer/1.6.2/scripts/chimeric_blacklist.awk "$f;done >chimericReadAlignments
+paste <(ls -1 *norm.txt ) <(ls -1 *abnorm.sam ) <(ls -1 *unmapped.sam ) <(ls -1 *1merge.sam)|while read a b c d; do echo "awk -v \"fname1\"="$a" -v \"fname2\"="$b" -v \"fname3\"="$c"  -f /software/7/apps/juicer/1.6.2/scripts/chimeric_blacklist.awk "$d;done >chimericReadAlignments
+
  sh chimericReadAlignments
 
 
@@ -129,11 +129,19 @@ echo "sort --parallel=40 -S110G -T /home/rick.masonbrink/elk_bison_genomics/Maso
 
 ```
 
-### job11 and job12 -- job11 is essentially empty, ut job12 is the deduplication of reads.
+### job11 and job12 -- job11 is essentially empty, but job12 is the deduplication of reads.
 ```
 awk -v queue=long -v groupname=a1560892488 -v debugdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/debug -v dir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned -v topDir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer -v  juicedir=/software/7/apps/juicer/1.6.2/scripts/ -v site=DpnII -v genomeID=SCN -v genomePath=chrom.sizes -v user=rick.masonbrink -v guardjid="a1560892488_dedup_guard" -f /software/7/apps/juicer/1.6.2/scripts/split_rmdups.awk /home/rick.masonbrink/elk_bison_genomics/Masonbrink/02_TestJuicer/aligned/merged_sort.txt
 
 #THIS ACTUALLY WORKS WITHOUT MODIFICATION.  submit the above to a 48 hr node, and change the split_rmdups.awk script to submit to short nodes
+
+#there were errors here, but it appears to work
+```
+
+## 3D-DNA pipeline
+```
+#oddly the merged_nodups.txt file is pretty small in comparison to earlier work.  Only difference is the slurm scripts and the different fragment file (correct this time)
+Looks like the intrachromosomal reads were missign for most of the larger scaffolds.  Not sure what caused that
 
 
 ```

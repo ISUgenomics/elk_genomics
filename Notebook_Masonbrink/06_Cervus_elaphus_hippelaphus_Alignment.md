@@ -1,0 +1,2 @@
+less AllBlasts.blast.out |grep "chromosome Y" |awk '{if($10>$11){print $1,$11,$10,$5":"$12"-"$13}else {print $1,$10,$11,$5":"$12"-"$13}}' |sort -k1,1V -k2,2n |tr " " "\t" >Ychromosome.bed
+[rick.masonbrink@sn-cn-18-2 09_CervusElaphusHippelaphus]$ less AllBlasts.blast.out |grep "chromosome X" |awk '{if($10>$11){print $1,$11,$10,$5":"$12"-"$13}else {print $1,$10,$11,$5":"$12"-"$13}}' |sort -k1,1V -k2,2n |tr " " "\t" >Xchromosome.bed

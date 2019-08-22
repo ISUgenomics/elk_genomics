@@ -146,7 +146,10 @@ Mean:   461
 Median: 360
 Min:    119
 Max:    8,167
+```
 
+### Examine nematoda contamination
+```
 #are those nematoda contigs really contamination?
 less blobplot_out.blobDB.table.txt |awk '$6=="Nematoda"' |wc
    286    2288   15739
@@ -185,5 +188,5 @@ cat trf_html/*ndense.out |sed 's/--/ /g' |awk '$5>($9*.9){print $2}' |cat - <(le
 #quick look at the remaining fastas
 cat trf_html/*ndense.out |sed 's/--/ /g' |awk '$5>($9*.9){print $2}' |cat - <(less NematodaScaffs.blastout |grep -v "Onchocerca" |sort -k1,1V -k3,3n |awk '{print $1}' |sort|uniq|less) |sort|uniq|grep -v -f - NematodaScaffs.blastout |awk '{print $1}' |sort|uniq|while read line; do samtools faidx FirstScaffoldsStep0.FINAL.fasta $line; done |less
 #these still look like low complexity repeats
-Manually inspected last 27 sequences, all are simple repeats.
+Manually inspected last 27 sequences, all are simple repeats.  There is no nematoda contamination.
 ```
