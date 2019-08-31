@@ -103,12 +103,51 @@ for f in *sam; do echo "module load samtools;samtools sort -m 3G -o "${f%.*}"_so
 ### Need to cap the number of reads aligning to regions of the genome to prevent memory issues.  
 ```
 #just a test
-module load miniconda; source activate my_root; module load java/11.0.2;java -Djava.io.tmpdir=TEMP/ -Xmx120g -jar ../11_PolishGenomeWithCCS/jvarkit/dist/sortsamrefname.jar 8Bull-OSMn_S4_L007_R1_001.fastq.bam |java -jar jvarkit/dist/biostar154220.jar  -n 100  |samtools sort -o 8Bull-OSMn_S4_L007_R1_001.fastq_test.bam -
+module load miniconda; source activate my_root; module load java/11.0.2;module load samtools|java -Djava.io.tmpdir=TEMP/ -Xmx120g -jar ../11_PolishGenomeWithCCS/jvarkit/dist/sortsamrefname.jar 8Bull-OSMn_S4_L007_R1_001.fastq.bam |java -jar jvarkit/dist/biostar154220.jar  -n 100  |samtools sort -o 8Bull-OSMn_S4_L007_R1_001.fastq_test.bam -
+
+#adapt to all bam files
+ls *bai |sed 's/\.bai//g'|while read line; do echo "module load miniconda; source activate my_root; module load java/11.0.2;module load samtools;java -Djava.io.tmpdir="${line%.*}"_TEMP/ -Xmx120g -jar ../11_PolishGenomeWithCCS/jvarkit/dist/sortsamrefname.jar --samoutputformat BAM "$line" |java -jar jvarkit/dist/biostar154220.jar  --samoutputformat BAM -n 30  |samtools sort -o "${line%.*}".reduced.bam - ";done >ReduceBams.sh
 ```
 
 
 ### test pilon with a part of the reads
 ```
 ls -lrth *bai |awk '{print $9}' |sed 's/\.bai//g' |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP2  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  ../11_PolishGenomeWithCCS/FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000" }' >PilonTest.sh
+#out of heap space, as expected
 
+#Another test
+ls -1 *reduced* |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx1020g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome OurElkMitochondria.fasta "$0" --unpaired  ../11_PolishGenomeWithCCS/FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
+
+ls -1 *reduced* |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
+
+
+
+
+
+#### Split scaffolds for pilon ####
+
+ln -s ../FinalGenome.fa
+fasta-splitter.pl --n-parts 36 FinalGenome.fa
+unlink FinalGenome.fa
+
+for f in ../*reduced.bam; do ln -s $f;done
+for f in ../*reduced.bam.bai; do ln -s $f;done
+ln -s ../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam
+ln -s ../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam.bai
+
+
+for f in *bam; do mkdir ${f%.*}_temp; done
+
+
+#use this to make script below
+ls -1 *reduced.bam |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /
+software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.f
+a --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
+
+
+#run scripts for pilon
+for f in *fa; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir="${f%.*}_temp  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome "$f" --frags 2450-OS-Mn_S8_L008_R1_001.fastq_sorted.reduced.bam --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --frags 2463-OS-Mn_S3_L004_R1_001.fastq_sorted.reduced.bam --frags 2486-OS-Mn_S1_L002_R1_001.fastq_sorted.reduced.bam --frags 2510-Os-Mn_S8_L006_R1_001.fastq_sorted.reduced.bam --frags 2758-OS-Mn_S2_L003_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L005_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L006_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L007_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L008_R1_001.fastq_sorted.reduced.bam --frags WY10-Pine_S6_L006_R1_001.fastq_sorted.reduced.bam --frags WY1-Pine_S1_L001_R1_001.fastq_sorted.reduced.bam --frags WY2-Pine_S2_L002_R1_001.fastq_sorted.reduced.bam --frags WY3-Pine_S3_L003_R1_001.fastq_sorted.reduced.bam --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output "${f%.*}Pilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000";done >Pilon.sh
+
+
+submitted each one to a single short node
 ```
