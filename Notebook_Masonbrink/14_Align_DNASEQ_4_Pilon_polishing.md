@@ -150,4 +150,52 @@ for f in *fa; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir="${f%.*}
 
 
 submitted each one to a single short node
+
+
+######################Results##################################3
+
+
+#Number of changes that each fasta file/pseudomolecule encountered
+[rick.masonbrink@sn-cn-18-1 01_SplitForPilon]$ for f in *.changes; do wc -l $f;done
+2369 FinalGenome.part-01Pilon.fa.changes
+29155 FinalGenome.part-03Pilon.fa.changes
+26624 FinalGenome.part-04Pilon.fa.changes
+23091 FinalGenome.part-11Pilon.fa.changes
+21005 FinalGenome.part-12Pilon.fa.changes
+27877 FinalGenome.part-13Pilon.fa.changes
+19986 FinalGenome.part-14Pilon.fa.changes
+16510 FinalGenome.part-15Pilon.fa.changes
+15092 FinalGenome.part-17Pilon.fa.changes
+22802 FinalGenome.part-18Pilon.fa.changes
+15887 FinalGenome.part-19Pilon.fa.changes
+15517 FinalGenome.part-20Pilon.fa.changes
+28002 FinalGenome.part-21Pilon.fa.changes
+14326 FinalGenome.part-22Pilon.fa.changes
+13529 FinalGenome.part-23Pilon.fa.changes
+11402 FinalGenome.part-24Pilon.fa.changes
+24279 FinalGenome.part-25Pilon.fa.changes
+13618 FinalGenome.part-26Pilon.fa.changes
+14757 FinalGenome.part-27Pilon.fa.changes
+12722 FinalGenome.part-29Pilon.fa.changes
+13944 FinalGenome.part-30Pilon.fa.changes
+17720 FinalGenome.part-31Pilon.fa.changes
+22096 FinalGenome.part-32Pilon.fa.changes
+11842 FinalGenome.part-33Pilon.fa.changes
+9409 FinalGenome.part-34Pilon.fa.changes
+36215 FinalGenome.part-35Pilon.fa.changes
+2406 FinalGenome.part-36Pilon.fa.changes
+
+
+#how much sequence has changed?
+module load miniconda
+source activate bioawk
+
+less *Pilon.fa.changes |awk '{print $4}' |sed 's/ //g' |sed 's/^/>fastaName\n/g' |sed 's/\.//g' |bioawk -c fastx '{print length($seq)}' |summary.sh
+Total:  17,891,227
+Count:  650,590
+Mean:   27
+Median: 1
+Min:    0
+
+
 ```
