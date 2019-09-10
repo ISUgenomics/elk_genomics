@@ -32,7 +32,6 @@ less ScaffLen2TopHit.blastout |awk '$6>(.8*$2) && $5>.9' |wc
   18795  263130 2323854
 
 #How many are 90% contained and and 90% identical
-ScaffLen2TopHit.blastout |awk '$6>(.9*$2) && $5>.9' |wc
 less ScaffLen2TopHit.blastout |awk '$6>(.9*$2) && $5>.9' |wc
   18579  260106 2296849
 ```

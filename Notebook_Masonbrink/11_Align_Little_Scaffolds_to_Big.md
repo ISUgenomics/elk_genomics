@@ -148,8 +148,62 @@ awk '$7>0 {print $1}' ../16_RNAseq/AllReads_GeneReadCounts.txt |while read line;
 awk '{print $1}' goThroughTheseByHand.bedlike|sort|uniq|wc
     458     458    8152
 
+#Manually deleted HiC_scaffold_58 -- the concatenated mitochondria
+
 less goThroughTheseByHand.bedlike|awk '{print $1}' |while read line; do samtools faidx LittleScaffs.fasta $line; done >LittleScaffoldsRemaining.fasta
 
 cat ../12_C.elaphusHippelaphus2/OurElkMitochondria.fasta LittleScaffoldsRemaining.fasta BigScaffs.fasta >FinalGenome.fa
 
+
+---------------- Information for assembly '../FinalGenome.fa' ----------------
+
+
+                                         Number of scaffolds        493
+                                     Total size of scaffolds 2529467193
+                                            Longest scaffold  146207705
+                                           Shortest scaffold       1004
+                                 Number of scaffolds > 1K nt        493 100.0%
+                                Number of scaffolds > 10K nt        177  35.9%
+                               Number of scaffolds > 100K nt         35   7.1%
+                                 Number of scaffolds > 1M nt         35   7.1%
+                                Number of scaffolds > 10M nt         34   6.9%
+                                          Mean scaffold size    5130765
+                                        Median scaffold size       6000
+                                         N50 scaffold length   77665974
+                                          L50 scaffold count         13
+                                                 scaffold %A      29.18
+                                                 scaffold %C      20.79
+                                                 scaffold %G      20.79
+                                                 scaffold %T      29.16
+                                                 scaffold %N       0.09
+                                         scaffold %non-ACGTN       0.00
+                             Number of scaffold non-ACGTN nt          0
+
+                Percentage of assembly in scaffolded contigs      99.9%
+              Percentage of assembly in unscaffolded contigs       0.1%
+                      Average number of contigs per scaffold       16.3
+Average length of break (>25 Ns) between contigs in scaffold        298
+
+                                           Number of contigs       8016
+                              Number of contigs in scaffolds       7594
+                          Number of contigs not in scaffolds        422
+                                       Total size of contigs 2527225143
+                                              Longest contig    4878448
+                                             Shortest contig        180
+                                   Number of contigs > 1K nt       8004  99.9%
+                                  Number of contigs > 10K nt       6781  84.6%
+                                 Number of contigs > 100K nt       4321  53.9%
+                                   Number of contigs > 1M nt        653   8.1%
+                                  Number of contigs > 10M nt          0   0.0%
+                                            Mean contig size     315273
+                                          Median contig size     121491
+                                           N50 contig length     826534
+                                            L50 contig count        887
+                                                   contig %A      29.20
+                                                   contig %C      20.80
+                                                   contig %G      20.81
+                                                   contig %T      29.18
+                                                   contig %N       0.00
+                                           contig %non-ACGTN       0.00
+                               Number of contig non-ACGTN nt          0
 ```

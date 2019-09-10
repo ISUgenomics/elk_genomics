@@ -27,7 +27,7 @@ Max:    48,127
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/11_PolishGenomeWithCCS
 
-sh runPilon.sh FinalAssemblyFastaWithY.fasta /home/rick.masonbrink/elk_bison_genomics/Masonbrink/11_PolishGenomeWithCCS FinalAssemblyFastaWithY.fasta
+sh runPilon.sh AllCCSReads.fa /home/rick.masonbrink/elk_bison_genomics/Masonbrink/11_PolishGenomeWithCCS FinalGenome.fa
 
 ###############################################################################
 #runPilon.sh
@@ -52,17 +52,29 @@ R2_FQ="$5"
 #samtools sort -m 7G -o ${GENOME%.*}.${R1_FQ%.*}_sorted.bam -T Round3PilonPB_temp --threads 16 ${GENOME%.*}.${R1_FQ%.*}.bam
 #samtools index ${GENOME%.*}.${R1_FQ%.*}_sorted.bam
 
+module load minimap2
+minimap2 -L -ax map-pb ${GENOME} ${PBReadsFq}  >${GENOME%.*}.${PBReadsFq%.*}.sam
 
-#module load minimap2
-#minimap2 -L -ax map-pb ${GENOME} ${PBReadsFq}  >${GENOME%.*}.${PBReadsFq%.*}.sam
-
-#module load samtools
-#samtools view --threads 40 -b -o ${GENOME%.*}.${PBReadsFq%.*}.bam ${GENOME%.*}.${PBReadsFq%.*}.sam
-#samtools sort -m 3G -o ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam -T Round3PilonPB_temp --threads 40 ${GENOME%.*}.${PBReadsFq%.*}.bam
-#samtools index ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam
+module load samtools
+samtools view --threads 40 -b -o ${GENOME%.*}.${PBReadsFq%.*}.bam ${GENOME%.*}.${PBReadsFq%.*}.sam
+samtools sort -m 3G -o ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam -T Round3PilonPB_temp --threads 40 ${GENOME%.*}.${PBReadsFq%.*}.bam
+samtools index ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam
 
 module load pilon
 java -Xmx1024g -Djava.io.tmpdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/07_blobtools2juiced/TEMP -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome ${GENOME}  --unpaired ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam --output ${GENOME%.*}.Pilon --outdir ${DIR} --changes --fix all --threads 40 --mingap 0 --chunksize 100000
+
+
 ###############################################################################
+
+## This was not sufficient to allow for changes to be made.  Most contigs had a single subread aligning and a minimum depth of 5 is needed to make changes.
+
+```
+
+
+### Restart mapping with subreads
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/11_PolishGenomeWithCCS
+
+sh runPilon.sh AllSubreads.fastq /home/rick.masonbrink/elk_bison_genomics/Masonbrink/11_PolishGenomeWithCCS FinalGenome.fa
 
 ```
