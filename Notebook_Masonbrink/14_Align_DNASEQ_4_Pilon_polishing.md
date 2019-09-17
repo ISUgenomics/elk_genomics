@@ -146,7 +146,7 @@ a --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
 
 
 #run scripts for pilon
-for f in *fa; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir="${f%.*}_temp  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome "$f" --frags 2450-OS-Mn_S8_L008_R1_001.fastq_sorted.reduced.bam --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --frags 2463-OS-Mn_S3_L004_R1_001.fastq_sorted.reduced.bam --frags 2486-OS-Mn_S1_L002_R1_001.fastq_sorted.reduced.bam --frags 2510-Os-Mn_S8_L006_R1_001.fastq_sorted.reduced.bam --frags 2758-OS-Mn_S2_L003_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L005_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L006_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L007_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L008_R1_001.fastq_sorted.reduced.bam --frags WY10-Pine_S6_L006_R1_001.fastq_sorted.reduced.bam --frags WY1-Pine_S1_L001_R1_001.fastq_sorted.reduced.bam --frags WY2-Pine_S2_L002_R1_001.fastq_sorted.reduced.bam --frags WY3-Pine_S3_L003_R1_001.fastq_sorted.reduced.bam --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output "${f%.*}Pilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000";done >Pilon.sh
+for f in *fa; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir="${f%.*}"_temp  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome "$f" --frags 2450-OS-Mn_S8_L008_R1_001.fastq_sorted.reduced.bam --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --frags 2463-OS-Mn_S3_L004_R1_001.fastq_sorted.reduced.bam --frags 2486-OS-Mn_S1_L002_R1_001.fastq_sorted.reduced.bam --frags 2510-Os-Mn_S8_L006_R1_001.fastq_sorted.reduced.bam --frags 2758-OS-Mn_S2_L003_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L005_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L006_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L007_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L008_R1_001.fastq_sorted.reduced.bam --frags WY10-Pine_S6_L006_R1_001.fastq_sorted.reduced.bam --frags WY1-Pine_S1_L001_R1_001.fastq_sorted.reduced.bam --frags WY2-Pine_S2_L002_R1_001.fastq_sorted.reduced.bam --frags WY3-Pine_S3_L003_R1_001.fastq_sorted.reduced.bam --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalGenome.AllCCSReads_sorted.bam --output "${f%.*}"Pilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000";done >Pilon.sh
 
 
 submitted each one to a single short node
@@ -196,6 +196,157 @@ Count:  650,590
 Mean:   27
 Median: 1
 Min:    0
+Max:    5,789
 
+
+#How many of the nucleotides were confirmed by pilon?  -- still missing scaff_16
+
+#total confirmed
+cat Pilon_*.o* |grep "Confirmed" |awk '{print $2}' |summary.sh
+Total:  2,491,997,436
+Count:  25,577
+Mean:   97,431
+Median: 99,426
+Min:    466
+Max:    99,991
+
+#Total Genome
+ cat Pilon_*.o* |grep "Confirmed" |awk '{print $4}' |summary.sh
+Total:  2,512,474,760
+Count:  25,577
+Mean:   98,231
+Median: 99,919
+Min:    1,004
+Max:    100,000
+
+
+So far, 99.18% confirmed
+```
+
+### Hi-C_scaffold_16 timed out after 48hrs on a high mem node
+
+```
+#split and run pilon on the 100kb parts
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_PilonPairedEnd/01_SplitForPilon/01_SplitPilon15
+
+
+ln -s ../FinalGenome.part-16.fa
+for f in ../*reduced.bam; do ln -s $f;done
+for f in ../*reduced.bam.bai; do ln -s $f;done
+ln -s ../../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam
+ln -s ../../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam.bai
+
+
+for f in *bam; do mkdir ${f%.*}_temp; done
+
+
+#use this to make script below
+ls -1 *reduced.bam |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /
+software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.f
+a --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
+
+java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa --frags 2450-OS-Mn_S8_L008_R1_001.fastq_sorted.reduced.bam --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --frags 2463-OS-Mn_S3_L004_R1_001.fastq_sorted.reduced.bam --frags 2486-OS-Mn_S1_L002_R1_001.fastq_sorted.reduced.bam --frags 2510-Os-Mn_S8_L006_R1_001.fastq_sorted.reduced.bam --frags 2758-OS-Mn_S2_L003_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L005_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L006_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L007_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L008_R1_001.fastq_sorted.reduced.bam --frags WY10-Pine_S6_L006_R1_001.fastq_sorted.reduced.bam --frags WY1-Pine_S1_L001_R1_001.fastq_sorted.reduced.bam --frags WY2-Pine_S2_L002_R1_001.fastq_sorted.reduced.bam --frags WY3-Pine_S3_L003_R1_001.fastq_sorted.reduced.bam --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000
+
+#run scripts for pilon
+for f in *ChromosomeShredder; do echo "module load pilon;java -Xmx20g -Djava.io.tmpdir="$f"_temp  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome "$f" --frags 2450-OS-Mn_S8_L008_R1_001.fastq_sorted.reduced.bam --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --frags 2463-OS-Mn_S3_L004_R1_001.fastq_sorted.reduced.bam --frags 2486-OS-Mn_S1_L002_R1_001.fastq_sorted.reduced.bam --frags 2510-Os-Mn_S8_L006_R1_001.fastq_sorted.reduced.bam --frags 2758-OS-Mn_S2_L003_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L005_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L006_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L007_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L008_R1_001.fastq_sorted.reduced.bam --frags WY10-Pine_S6_L006_R1_001.fastq_sorted.reduced.bam --frags WY1-Pine_S1_L001_R1_001.fastq_sorted.reduced.bam --frags WY2-Pine_S2_L002_R1_001.fastq_sorted.reduced.bam --frags WY3-Pine_S3_L003_R1_001.fastq_sorted.reduced.bam --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalGenome.AllCCSReads_sorted.bam --output "${f%.*}"Pilon.fa --outdir . --changes --fix all --threads 1 --chunksize 100000";done >Pilon.sh
+
+#generates a target list
+for f in {1..746}; do echo "HiC_scaffold_18: "$f; done |awk '{print $1,(($2*100000)-99999)"-"($2*100000)}' |sed 's/ //g' |while read line; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir="$line"_temp  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.part-16.fa --frags 2450-OS-Mn_S8_L008_R1_001.fastq_sorted.reduced.bam --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --frags 2463-OS-Mn_S3_L004_R1_001.fastq_sorted.reduced.bam --frags 2486-OS-Mn_S1_L002_R1_001.fastq_sorted.reduced.bam --frags 2510-Os-Mn_S8_L006_R1_001.fastq_sorted.reduced.bam --frags 2758-OS-Mn_S2_L003_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L005_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L006_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L007_R1_001.fastq_sorted.reduced.bam --frags 8Bull-OSMn_S4_L008_R1_001.fastq_sorted.reduced.bam --frags WY10-Pine_S6_L006_R1_001.fastq_sorted.reduced.bam --frags WY1-Pine_S1_L001_R1_001.fastq_sorted.reduced.bam --frags WY2-Pine_S2_L002_R1_001.fastq_sorted.reduced.bam --frags WY3-Pine_S3_L003_R1_001.fastq_sorted.reduced.bam --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalGenome.AllCCSReads_sorted.bam --output "${line%.*}"Pilon.fa --outdir . --changes --fix all --threads 40 --targets "$line" --chunksize 50000";done >Pilon.sh
+
+
+for f in {1..746}; do echo "HiC_scaffold_18: "$f; done |awk '{print $1,(($2*100000)-99999)"-"($2*100000)}' |sed 's/ //g' |while read line; do mkdir $line"_temp";done
+
+for f in ../*reduced.bam; do ln -s $f;done
+for f in ../*reduced.bam.bai; do ln -s $f;done
+ln -s ../../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam
+ln -s ../../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam.bai
+```
+
+### Try to mask the ribosomal array so Pilon will move
+```
+
+less consensi.fa.classified |grep "Satellite" |sed 's/>//g' |sed 's/#/\t/g' |awk '{print $1}' |while read line; do grep -w $line FinalGenome.part-16.fa.out.gff; done |sort -k 4,5n |awk '{print $1,$4,$5}' |tr " " "\t" |bedtools merge -d 100000|awk '($3-$2)>2000' |bedtools complement -i - -g FinalGenome.part-16.length|bedtools makewindows -b - -w 50000 |sed 's/\t/:/1' |sed 's/\t/-/1' |tr "\n" "," |awk '{print $0}' |while read line; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.part-16.fa  --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalGenome.AllCCSReads_sorted.bam --output FinalGenome.part-16.Pilon.fa --outdir . --changes --fix all --threads 40 --targets "$line" --chunksize 50000";done >Pilon.sh
+
+#skip all repeats, not just satellites.  have to use high mem node if using all reads, so cut to just one.
+less FinalGenome.part-16.fa.out.gff |sort -k 4,5n |awk '{print $1,$4,$5}' |tr " " "\t" |bedtools merge -d 1000|awk '($3-$2)>5000' |bedtools complement -i - -g FinalGenome.part-16.length|bedtools makewindows -b - -w 50000 |sed 's/\t/:/1' |sed 's/\t/-/1' |tr "\n" "," |awk '{print $0}' |while read line; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.part-16.fa --frags 2458-0S-Mn_S7_L007_R1_001.fastq_sorted.reduced.bam --unpaired  FinalGenome.AllCCSReads_sorted.bam --output FinalGenome.part-16.Pilon.fa --outdir . --changes --fix all --threads 40 --targets "$line" --chunksize 50000";done >Pilon.sh
+
+
+#This is how much of the chromosome is going to be polished.
+less FinalGenome.part-16.fa.out.gff |sort -k 4,5n |awk '{print $1,$4,$5}' |tr " " "\t" |bedtools merge -d 1000|awk '($3-$2)>5000' |bedtools complement -i - -g FinalGenome.part-16.length| awk '{print $3-$2}' |summary.sh
+Total:  49,328,884
+Count:  2,619
+Mean:   18,835
+Median: 9,104
+Min:    1,001
+Max:    1,888,303
+
+Finished.  REMEMBER NEXT TIME THAT PILON IS 1 COORDINATE BASED, NOT ZERO BASED.
+#changed the zero at the start coordinate, and pilon finished.
+#so pilon does not concatenate the targeted sections, and leaves them as separate scaffolds.  need to merge in the proper order
+
+#unpolished sections
+less Pilon_0.o943881 |grep "changes to" |awk '{print $2}' |sed 's/:/\t/g' |sed 's/-/\t/g' |bedtools complement -i - -g FinalGenome.part-16.length |sed 's/\t/:/1' |sed 's/\t/-/1' |awk 'NR>1' |while read line; do samtools faidx FinalGenome.part-16.fa $line; done |tr "\n" "\t" |sed 's/>/\n>/g' |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' >fastaList2
+
+#polished sections
+paste <(less Pilon_0.o943881 |grep "changes to" |awk '{print ">"$2}' ) <(less FinalGenome.part-16.Pilon.fa.fasta |tr "\n" "\t" |sed 's/>/\n>/g' |sed 's/\t//g' |sed 's/pilon/pilon\t/g' |awk 'NR>1' ) |cut -f 1,3 >fastaList1
+cat fastaList1 fastaList2|sed 's/:/\t/1' |sed 's/-/\t/1' |sort -k2,3n |awk 'NR>1' |cut -f 4 |tr "\n" "#" |sed 's/#//g' |cat <(echo ">HiC_scaffold_18_pilon") - >Fixed.FinalGenome.part-16.Pilon.fa.fasta
+
+cat ../*Pilon.fa.fasta Fixed.FinalGenome.part-16.Pilon.fa.fasta >FinalGenomePilon.fa
+
+---------------- Information for assembly 'FinalGenomePilon.fa' ----------------
+
+
+                                         Number of scaffolds        493
+                                     Total size of scaffolds 2529349837
+                                            Longest scaffold  146388637
+                                           Shortest scaffold       1004
+                                 Number of scaffolds > 1K nt        493 100.0%
+                                Number of scaffolds > 10K nt        177  35.9%
+                               Number of scaffolds > 100K nt         35   7.1%
+                                 Number of scaffolds > 1M nt         35   7.1%
+                                Number of scaffolds > 10M nt         34   6.9%
+                                          Mean scaffold size    5130527
+                                        Median scaffold size       6008
+                                         N50 scaffold length   77654944
+                                          L50 scaffold count         13
+                                         n90 scaffold length   51438166
+                                          L90 scaffold count         29
+                                                 scaffold %A      29.18
+                                                 scaffold %C      20.79
+                                                 scaffold %G      20.79
+                                                 scaffold %T      29.16
+                                                 scaffold %N       0.08
+                                         scaffold %non-ACGTN       0.00
+                             Number of scaffold non-ACGTN nt          0
+
+                Percentage of assembly in scaffolded contigs      99.8%
+              Percentage of assembly in unscaffolded contigs       0.2%
+                      Average number of contigs per scaffold       10.8
+Average length of break (>25 Ns) between contigs in scaffold        392
+
+                                           Number of contigs       5306
+                              Number of contigs in scaffolds       4873
+                          Number of contigs not in scaffolds        433
+                                       Total size of contigs 2527461845
+                                              Longest contig    8486465
+                                             Shortest contig        180
+                                   Number of contigs > 1K nt       5298  99.8%
+                                  Number of contigs > 10K nt       4718  88.9%
+                                 Number of contigs > 100K nt       3427  64.6%
+                                   Number of contigs > 1M nt        777  14.6%
+                                  Number of contigs > 10M nt          0   0.0%
+                                            Mean contig size     476340
+                                          Median contig size     209904
+                                           N50 contig length    1121308
+                                            L50 contig count        634
+                                           n90 contig length     274935
+                                            L90 contig count       2339
+                                                   contig %A      29.20
+                                                   contig %C      20.81
+                                                   contig %G      20.81
+                                                   contig %T      29.18
+                                                   contig %N       0.00
+                                           contig %non-ACGTN       0.00
+                               Number of contig non-ACGTN nt          0
 
 ```
