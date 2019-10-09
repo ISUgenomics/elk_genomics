@@ -44,6 +44,101 @@ wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/197/005/GCA_002197005.1_CerE
 /home/rick.masonbrink/elk_bison_genomics/Masonbrink/16_RNAseq/Elk-kidney_S25_L003_R1_001.fastq
 ```
 
+### RepeatMasker of new genome
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/02_RepeatMasker
+ln -s ../../26_RefineLittle2Big3/FinalGenomePilonReduced.fa
+ln -s ../../03_repeatmodeler/consensi.fa.classified
+
+sh runRepeatModeler.sh FinalGenomePilonReduced.fa
+
+#runRepeatModeler
+###############################################################################
+#!/bin/bash
+# runs repeat masking for the genome after constructing custom repeat library
+# uses repeat modeler for building custom db and RepeatMasking for masking
+# run it as:
+# runRepeatModeler.sh Genome.fasta
+# based on Rick's guide https://intranet.gif.biotech.iastate.edu/doku.php/people:remkv6:genome738polished_repeatmodeler_--de_novo_repeat_identification
+
+if [ $# -lt 1 ] ; then
+        echo "usage: runRepeatModeler <genome.fasta>"
+        echo ""
+        echo "To build custom repeat library and mask the repeats of the genome"
+        echo ""
+exit 0
+fi
+
+
+GENOME="$1"
+module purge
+module load parallel
+
+module load repeatmasker/4.0.7
+#module load repeatmodeler/1.0.8
+#DATABASE="$(basename ${GENOME%.*}).DB"
+#BuildDatabase -name ${DATABASE} -engine ncbi ${GENOME}
+#RepeatModeler -database ${DATABASE}  -engine ncbi -pa 16
+#ln -s $(find $(pwd) -name "consensi.fa.classified")
+RepeatMasker -pa 40 -gff -lib consensi.fa.classified ${GENOME}
+#################################################################################
+
+#rename the scaffolds and get rid of special characters
+sed 's/_//g' FinalGenomePilonReduced.fa.masked |sed 's/pilon//g' >FinalGenomePilonReducedRenamedMasked.fa
+```
+
+
+
+### Perform alignments of expression data
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/06_AlignRNAMasked
+
+for f in  ../*fastq; do ln -s $f;done
+ln -s ../02_RepeatMasker/FinalGenomePilonReducedRenamedMasked.fa
+
+sh runHISAT2.sh Elk-kidney_S25_L003_R1_001.fastq Elk-kidney_S25_L003_R2_001.fastq
+sh runHISAT2.sh Elk-kidney_S25_L004_R1_001.fastq Elk-kidney_S25_L004_R2_001.fastq
+sh runHISAT2.sh Elk-lung_S26_L003_R1_001.fastq Elk-lung_S26_L003_R2_001.fastq
+sh runHISAT2.sh Elk-lung_S26_L004_R1_001.fastq Elk-lung_S26_L004_R2_001.fastq
+sh runHISAT2.sh Elk-Mes-LN_S24_L003_R1_001.fastq Elk-Mes-LN_S24_L003_R2_001.fastq
+sh runHISAT2.sh Elk-Mes-LN_S24_L004_R1_001.fastq Elk-Mes-LN_S24_L004_R2_001.fastq
+sh runHISAT2.sh Elk-muscle_S21_L003_R1_001.fastq Elk-muscle_S21_L003_R2_001.fastq
+sh runHISAT2.sh Elk-muscle_S21_L004_R1_001.fastq Elk-muscle_S21_L004_R2_001.fastq
+sh runHISAT2.sh ElkpscapLN_S22_L003_R1_001.fastq ElkpscapLN_S22_L003_R2_001.fastq
+sh runHISAT2.sh ElkpscapLN_S22_L004_R1_001.fastq ElkpscapLN_S22_L004_R2_001.fastq
+sh runHISAT2.sh Elk-spleen_S23_L003_R1_001.fastq Elk-spleen_S23_L003_R2_001.fastq
+sh runHISAT2.sh Elk-spleen_S23_L004_R1_001.fastq Elk-spleen_S23_L004_R2_001.fastq
+sh runHISAT2.sh Undetermined_S0_L003_R1_001.fastq Undetermined_S0_L003_R2_001.fastq
+sh runHISAT2.sh Undetermined_S0_L004_R1_001.fastq Undetermined_S0_L004_R2_001.fastq
+
+#runHISAT2.sh
+################################################################################
+#!/bin/bash
+
+module load hisat2
+module load samtools
+DBDIR="/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/06_AlignRNAMasked"
+GENOME="FinalGenomePilonReducedRenamedMasked.fa"
+
+p=40
+R1_FQ="$1"
+R2_FQ="$2"
+
+
+hisat2 \
+  -p ${p} \
+  -x ${DBDIR}/${GENOME} \
+  -1 ${R1_FQ} \
+  -2 ${R2_FQ}  \
+  -S  ${R1_FQ}.sam &> ${R1_FQ}.log
+samtools view --threads 40 -b -o ${R1_FQ}.bam ${R1_FQ}.sam
+mkdir ${R1_FQ}_temp
+samtools sort  -o ${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40 ${R1_FQ}.bam
+samtools index ${R1_FQ}_sorted.bam
+################################################################################
+```
+
+
 ### Braker gene prediction for mikado
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker
@@ -56,14 +151,15 @@ ln -s ../16_RNAseq/uniprot-cervus.fasta
 ln -s ../16_RNAseq/GCA_002197005.1_CerEla1.0_cds_from_genomic.fna
 
 mkdir 01_AlignRNA
-
-
+for f in ../../16_RNAseq/*fastq; do ln -s $f;done
 
 
 module load braker/2.1.2
 
-braker --species=CervusCanadensis --gff3 --cores 40 --genome=SCNgenome.fasta --bam=SCNgenome.consensus_isoforms_sorted.bam,SCNgenome.H.glycinesEST_sorted.bam,AllRNASEQ_sorted.bam
+#copy the augustus config folder so it is writeable
+cp -rf /software/7/apps/augustus/3.3.2/config/ .
 
+ echo "module load braker; braker --species=CervusCanadensis -gff3 ----useexisting cores 40 --genome=FinalGenomePilonReduced.fa.masked --bam=Elk-kidney_S25_L003_R1_001.fastq_sorted.bam,Elk-kidney_S25_L004_R1_001.fastq_sorted.bam,Elk-lung_S26_L003_R1_001.fastq_sorted.bam,Elk-lung_S26_L004_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam,Elk-muscle_S21_L003_R1_001.fastq_sorted.bam,Elk-muscle_S21_L004_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam,Elk-spleen_S23_L003_R1_001.fastq_sorted.bam,Elk-spleen_S23_L004_R1_001.fastq_sorted.bam,Undetermined_S0_L003_R1_001.fastq_sorted.bam,FinalGenomePilonReduced.transcripts_sorted.bam --AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/05_BrakerRun/config/" >braker.sh
 ```
 
 ### Portcullis for gene prediciton
@@ -145,42 +241,4 @@ query=$4
 gmap_build -d $dbname  -D $dbloc $dbfasta
 gmap -D $dbloc -d $dbname -B 5 -t 40  --input-buffer-size=1000000 --output-buffer-size=1000000 -f gff3_gene  $query >${dbname%.*}.${query%.*}.gff3
 ################################################################################
-```
-
-### RepeatMasker of new genome
-```
-#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/22_RepeatMasker2
-
-ln -s ../03_repeatmodeler/consensi.fa.classified
-
-###############################################################################
-#!/bin/bash
-# runs repeat masking for the genome after constructing custom repeat library
-# uses repeat modeler for building custom db and RepeatMasking for masking
-# run it as:
-# runRepeatModeler.sh Genome.fasta
-# based on Rick's guide https://intranet.gif.biotech.iastate.edu/doku.php/people:remkv6:genome738polished_repeatmodeler_--de_novo_repeat_identification
-
-if [ $# -lt 1 ] ; then
-        echo "usage: runRepeatModeler <genome.fasta>"
-        echo ""
-        echo "To build custom repeat library and mask the repeats of the genome"
-        echo ""
-exit 0
-fi
-
-
-GENOME="$1"
-module purge
-module load parallel
-
-module load repeatmasker/4.0.7
-#module load repeatmodeler/1.0.8
-#DATABASE="$(basename ${GENOME%.*}).DB"
-#BuildDatabase -name ${DATABASE} -engine ncbi ${GENOME}
-#RepeatModeler -database ${DATABASE}  -engine ncbi -pa 16
-#ln -s $(find $(pwd) -name "consensi.fa.classified")
-RepeatMasker -pa 40 -gff -lib consensi.fa.classified ${GENOME}
-#################################################################################
-
 ```
