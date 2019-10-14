@@ -159,8 +159,10 @@ module load braker/2.1.2
 #copy the augustus config folder so it is writeable
 cp -rf /software/7/apps/augustus/3.3.2/config/ .
 
- echo "module load braker; braker --species=CervusCanadensis -gff3 ----useexisting cores 40 --genome=FinalGenomePilonReduced.fa.masked --bam=Elk-kidney_S25_L003_R1_001.fastq_sorted.bam,Elk-kidney_S25_L004_R1_001.fastq_sorted.bam,Elk-lung_S26_L003_R1_001.fastq_sorted.bam,Elk-lung_S26_L004_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam,Elk-muscle_S21_L003_R1_001.fastq_sorted.bam,Elk-muscle_S21_L004_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam,Elk-spleen_S23_L003_R1_001.fastq_sorted.bam,Elk-spleen_S23_L004_R1_001.fastq_sorted.bam,Undetermined_S0_L003_R1_001.fastq_sorted.bam,FinalGenomePilonReduced.transcripts_sorted.bam --AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/05_BrakerRun/config/" >braker.sh
+ echo "module load braker; braker --species=CervusCanadensis -gff3 ----useexisting cores 40 --genome=FinalGenomePilonReducedRenamedMasked.fa --bam=Elk-kidney_S25_L003_R1_001.fastq_sorted.bam,Elk-kidney_S25_L004_R1_001.fastq_sorted.bam,Elk-lung_S26_L003_R1_001.fastq_sorted.bam,Elk-lung_S26_L004_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam,Elk-muscle_S21_L003_R1_001.fastq_sorted.bam,Elk-muscle_S21_L004_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam,Elk-spleen_S23_L003_R1_001.fastq_sorted.bam,Elk-spleen_S23_L004_R1_001.fastq_sorted.bam,Undetermined_S0_L003_R1_001.fastq_sorted.bam,FinalGenomePilonReduced.transcripts_sorted.bam --AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/05_BrakerRun/config/" >braker.sh
 ```
+Lots of problems with braker installations/file formatting issues.  A single bam file will progress through the entire prediction, but all files do not.  I will try all rna-seq alignments only and eliminate the transcript alignments.  
+
 
 ### Portcullis for gene prediciton
 ```
@@ -168,7 +170,7 @@ cp -rf /software/7/apps/augustus/3.3.2/config/ .
 #uses lots of memory, so beware
 module load miniconda
 source activate portcullis
-portcullis full --threads 9 --verbose --use_csi --output portcullis_out --orientation FR SCNgenome.fasta NonRiboReads.bam
+echo "ml miniconda;source activate portcullis; portcullis full --threads 36 --verbose --use_csi --output portcullis_out --orientation FR FinalGenomePilonReduced.fa AllRNASEQ_sorted.bam" >portcullis.sh
 ```
 
 ### Stringtie transcript assembly for gene prediction
@@ -176,7 +178,11 @@ portcullis full --threads 9 --verbose --use_csi --output portcullis_out --orient
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/19_Stringtie
 
 module load stringtie
-stringtie NonRiboReads.bam -j 5 -p 16 -v -o NonRrnaRNASEQ_stringtie.gtf
+ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam
+ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam.bai
+ln -s ../17_Braker/01_AlignRNA/FinalGenomePilonReduced.fa
+
+stringtie AllRNASEQ_sorted.bam -j 5 -p 40 -v -o FinalGenomePilonReduced.gtf
 
 ```
 
@@ -186,15 +192,16 @@ stringtie NonRiboReads.bam -j 5 -p 16 -v -o NonRrnaRNASEQ_stringtie.gtf
 
 module load miniconda
 source activate Class2
-run_class.pl -a AllRNASEQ_sorted.bam -o AllRNASEQClass2.gtf -p 40 --verbose
-
+echo "ml miniconda; source actiate Class2; run_class.pl -a AllRNASEQ_sorted.bam -o AllRNASEQ_Class2.gtf -p 40 --verbose" > class2.sh
 ```
 
 ### Trinity assembly for gene prediction
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/21_Trinity
 
-sh runTrinity.sh NonRiboReads.bam
+ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam
+ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam.bai
+echo "module load trinityrnaseq/2.8.4; sh runTrinity.sh AllRNASEQ_sorted.bam" >trinity.sh
 
 
 #runTrinity.sh
@@ -241,4 +248,21 @@ query=$4
 gmap_build -d $dbname  -D $dbloc $dbfasta
 gmap -D $dbloc -d $dbname -B 5 -t 40  --input-buffer-size=1000000 --output-buffer-size=1000000 -f gff3_gene  $query >${dbname%.*}.${query%.*}.gff3
 ################################################################################
+```
+
+### run strawberry
+```
+#/project/elk_bison_genomics/Masonbrink/23_strawberry/strawberry
+
+ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam
+ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam.bai
+ln -s ../17_Braker/01_AlignRNA/FinalGenomePilonReduced.fa
+
+ml minioonda
+source activate strawberry
+strawberry  -T strawberry.log  --no-quant -p 40 -v AllRNASEQ_sorted.bam
+
+echo "ml miniconda; source activate strawberry; strawberry  -T strawberry.log  --no-quant -p 40 -v AllRNASEQ_sorted.bam" >strawberry.sh
+
+
 ```
