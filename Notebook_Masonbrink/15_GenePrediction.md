@@ -85,6 +85,15 @@ RepeatMasker -pa 40 -gff -lib consensi.fa.classified ${GENOME}
 
 #rename the scaffolds and get rid of special characters
 sed 's/_//g' FinalGenomePilonReduced.fa.masked |sed 's/pilon//g' >FinalGenomePilonReducedRenamedMasked.fa
+
+
+#Found a faster way to softmask the genome
+module load repeatmasker/4.0.7
+less FinalGenomePilonReduced.fa.out.gff |awk '{if($5>$4) {print $1,$4,$5} else {print $1,$5,$4}}' |tr " " "\t">
+repeats.bed
+ bedtools maskfasta -soft -fi FinalGenomePilonReduced.fa -bed repeats.bed -fo FinalGenomePilonReducedSoftMasked.fa
+
+
 ```
 
 
@@ -161,9 +170,55 @@ cp -rf /software/7/apps/augustus/3.3.2/config/ .
 
  echo "module load miniconda;source activate Braker; braker --species=CervusCanadensis -gff3 ----useexisting cores 40 --genome=FinalGenomePilonReducedRenamedMasked.fa --bam=Elk-kidney_S25_L003_R1_001.fastq_sorted.bam,Elk-kidney_S25_L004_R1_001.fastq_sorted.bam,Elk-lung_S26_L003_R1_001.fastq_sorted.bam,Elk-lung_S26_L004_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam,Elk-muscle_S21_L003_R1_001.fastq_sorted.bam,Elk-muscle_S21_L004_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam,Elk-spleen_S23_L003_R1_001.fastq_sorted.bam,Elk-spleen_S23_L004_R1_001.fastq_sorted.bam,Undetermined_S0_L003_R1_001.fastq_sorted.bamm --AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/05_BrakerRun/config/" >braker.sh
 ```
-Lots of problems with braker installations/file formatting issues.  A single bam file will progress through the entire prediction, but all files do not.  I will try all rna-seq alignments only and eliminate the transcript alignments.  
+Lots of problems with braker installations/file formatting issues.  A single bam file will progress through the entire prediction, but all files do not.  I will try all rna-seq alignments only and eliminate the transcript alignments.  Still no go, genemark fails on the ET_C_2 step with empty stop codon files.
 
 
+### Braker2 with all softmasked, recoded to only numbers
+```
+/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/11_AlignSoftmaskedRename
+
+#genome with original scaffold names
+ln -s ../02_RepeatMasker/FinalGenomePilonReducedSoftMasked.fa
+
+#fix genome to have only numbers for names
+less FinalGenomePilonReducedSoftMasked.fa |sed 's/HiC_scaffold_//g' |sed 's/_pilon//g' >FinalGenomePilonReducedSoftMaskedRecode.fa
+
+module load hisat2
+hisat2-build FinalGenomePilonReducedSoftMaskedRecode.fa FinalGenomePilonReducedSoftMaskedRecode
+
+for f in ../../16_RNAseq/*fastq; do ln -s $f;done
+vi runHISAT2.sh
+#################################################################################
+#!/bin/bash
+
+module load hisat2
+module load samtools
+DBDIR="/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/11_AlignSoftmaskedRename"
+GENOME="FinalGenomePilonReducedSoftMaskedRecode"
+
+p=40
+R1_FQ="$1"
+R2_FQ="$2"
+
+
+hisat2 \
+  -p ${p} \
+  -x ${DBDIR}/${GENOME} \
+  -1 ${R1_FQ} \
+  -2 ${R2_FQ}  \
+  -S  ${R1_FQ}.sam &> ${R1_FQ}.log
+samtools view --threads 40 -b -o ${R1_FQ}.bam ${R1_FQ}.sam
+mkdir ${R1_FQ}_temp
+samtools sort -m 3G -o ${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40 ${R1_FQ}.bam
+samtools index ${R1_FQ}_sorted.bam
+##################################################################################
+
+paste <(ls -1 *R1* ) <(ls -1 *R2*) |awk '{print "sh runHISAT2.sh "$0 }' >hisat2.sh
+makeSLURMs.py 1 hisat2.sh
+for f in *sub; do sbatch $f;done
+
+
+```
 ### Portcullis for gene prediciton
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/18_PortCullis
