@@ -98,7 +98,7 @@ repeats.bed
 
 
 
-### Perform alignments of expression data
+##### Perform alignments of expression data -- needed to realign later
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/06_AlignRNAMasked
 
@@ -145,6 +145,14 @@ mkdir ${R1_FQ}_temp
 samtools sort  -o ${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40 ${R1_FQ}.bam
 samtools index ${R1_FQ}_sorted.bam
 ################################################################################
+
+# Merge all of the bam files
+
+module load samtools; samtools merge -@ 40 AllRNASEQ.bam Elk-kidney_S25_L003_R1_001.fastq_sorted.bam Elk-kidney_S25_L004_R1_001.fastq_sorted.bam Elk-lung_S26_L003_R1_001.fastq_sorted.bam Elk-lung_S26_L004_R1_001.fastq_sorted.bam Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam Elk-muscle_S21_L003_R1_001.fastq_sorted.bam Elk-muscle_S21_L004_R1_001.fastq_sorted.bam ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam Elk-spleen_S23_L003_R1_001.fastq_sorted.bam Elk-spleen_S23_L004_R1_001.fastq_sorted.bam Undetermined_S0_L003_R1_001.fastq_sorted.bam Undetermined_S0_L004_R1_001.fastq_sorted.bam
+mkdir TEMP
+samtools sort -@ 40 -T TEMP -o AllRNASEQ_sorted.bam AllRNASEQ.bam;samtools index AllRNASEQ_sorted.bam
+
+
 ```
 
 
@@ -173,7 +181,7 @@ cp -rf /software/7/apps/augustus/3.3.2/config/ .
 Lots of problems with braker installations/file formatting issues.  A single bam file will progress through the entire prediction, but all files do not.  I will try all rna-seq alignments only and eliminate the transcript alignments.  Still no go, genemark fails on the ET_C_2 step with empty stop codon files.
 
 
-### Braker2 with all softmasked, recoded to only numbers
+### Align RNA-seq reades with softmasked genome, recoded to only numbers
 ```
 /home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/11_AlignSoftmaskedRename
 
@@ -206,38 +214,79 @@ hisat2 \
   -x ${DBDIR}/${GENOME} \
   -1 ${R1_FQ} \
   -2 ${R2_FQ}  \
+  --rna-strandness RF \
   -S  ${R1_FQ}.sam &> ${R1_FQ}.log
 samtools view --threads 40 -b -o ${R1_FQ}.bam ${R1_FQ}.sam
 mkdir ${R1_FQ}_temp
 samtools sort -m 3G -o ${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40 ${R1_FQ}.bam
 samtools index ${R1_FQ}_sorted.bam
+samtools view -h -F 16 ${R1_FQ}.sam |samtools view -b -o Forward${R1_FQ}.bam
+samtools view -h -f 16 ${R1_FQ}.sam | samtools view -b -o Reverse${R1_FQ}.bam
+samtools sort -m 3G -n -o Forward${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40  Forward${R1_FQ}.bam
+samtools sort -m 3G -n -o Reverse${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40  Reverse${R1_FQ}.bam
+samtools index Forward${R1_FQ}_sorted.bam
+samtools index Reverse${R1_FQ}_sorted.bam
+
 ##################################################################################
 
 paste <(ls -1 *R1* ) <(ls -1 *R2*) |awk '{print "sh runHISAT2.sh "$0 }' >hisat2.sh
-makeSLURMs.py 1 hisat2.sh
-for f in *sub; do sbatch $f;done
+
+
+# Merge the RNAseq alignments
+
+samtools merge -@ 20 AllStrandedRNASeq Elk-kidney_S25_L003_R1_001.fastq_sorted.bam Elk-kidney_S25_L004_R1_001.fastq_sorted.bam Elk-lung_S26_L003_R1_001.fastq_sorted.bam Elk-lung_S26_L004_R1_001.fastq_sorted.bam Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam Elk-muscle_S21_L003_R1_001.fastq_sorted.bam Elk-muscle_S21_L004_R1_001.fastq_sorted.bam ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam Elk-spleen_S23_L003_R1_001.fastq_sorted.bam Elk-spleen_S23_L004_R1_001.fastq_sorted.bam
+samtools index AllStrandedRNASeq.bam
+
+```
+
+### Run Braker
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/09_BrakerRunMasked
+
+
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=40
+#SBATCH -t 168:00:00
+#SBATCH --partition=mem
+#SBATCH -J braker_0
+#SBATCH -o braker_0.o%j
+#SBATCH -e braker_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+module purge;module load miniconda;source activate Braker;braker.pl --species=CervusCanadensis --nocleanup --gff3  --cores 40 --genome=FinalGenomePilonReducedSoftMaskedRenamed.fa --bam=Elk-kidney_S25_L003_R1_001.fastq_sorted.bam,Elk-kidney_S25_L004_R1_001.fastq_sorted.bam,Elk-lung_S26_L003_R1_001.fastq_sorted.bam,Elk-lung_S26_L004_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam,Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam,Elk-muscle_S21_L003_R1_001.fastq_sorted.bam,Elk-muscle_S21_L004_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam,ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam,Elk-spleen_S23_L003_R1_001.fastq_sorted.bam,Elk-spleen_S23_L004_R1_001.fastq_sorted.bam,Undetermined_S0_L003_R1_001.fastq_sorted.bam --AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/05_BrakerRun/config/ --AUGUSTUS_BIN_PATH=/home/rick.masonbrink/.conda/envs/Braker/bin/ --AUGUSTUS_SCRIPTS_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/05_BrakerRun/Augustus/scripts/ --GENEMARK_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/17_Braker/09_BrakerRunMasked/gm_et_linux_64/
+scontrol show job $SLURM_JOB_ID
 
 
 ```
+
+
+
+
 ### Portcullis for gene prediciton
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/18_PortCullis
 #uses lots of memory, so beware
-module load miniconda
-source activate portcullis
-echo "ml miniconda;source activate portcullis; portcullis full --threads 36 --verbose --use_csi --output portcullis_out --orientation FR FinalGenomePilonReduced.fa AllRNASEQ_sorted.bam" >portcullis.sh
+
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam.bai
+ln -s ../17_Braker/11_AlignSoftmaskedRename/FinalGenomePilonReducedSoftMaskedRecode.fa
+
+ml miniconda;source activate portcullis; portcullis full --threads 36 --verbose --output portcullis_out --orientation RF --strandedness firststrand FinalGenomePilonReducedSoftMaskedRecode.fa AllStrandedRNASeq.bam
 ```
 
 ### Stringtie transcript assembly for gene prediction
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/19_Stringtie
 
-module load stringtie
-ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam
-ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam.bai
-ln -s ../17_Braker/01_AlignRNA/FinalGenomePilonReduced.fa
+ln -s ../17_Braker/11_AlignSoftmaskedRename/FinalGenomePilonReducedSoftMaskedRecode.fa
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam.bai
 
-stringtie AllRNASEQ_sorted.bam -j 5 -p 40 -v -o FinalGenomePilonReduced.gtf
+ml stringtie; stringtie AllStrandedRNASeq.bam -j 5 --rf -p 40 -v -o FinalGenomePilonReducedSoftMaskedRecode.gtf
 
 ```
 
@@ -245,44 +294,70 @@ stringtie AllRNASEQ_sorted.bam -j 5 -p 40 -v -o FinalGenomePilonReduced.gtf
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/20_Class2
 
-module load miniconda
-source activate Class2
-echo "ml miniconda; source actiate Class2; run_class.pl -a AllRNASEQ_sorted.bam -o AllRNASEQ_Class2.gtf -p 40 --verbose" > class2.sh
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam.bai
+
+ml miniconda; source activate Class2; run_class.pl -a AllStrandedRNASeq.bam -o AllStrandedRNASeqClass2.gtf -p 40 --verbose
 ```
 
 ### Trinity assembly for gene prediction
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/21_Trinity
 
-ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam
-ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam.bai
-echo "module load trinityrnaseq/2.8.4; sh runTrinity.sh AllRNASEQ_sorted.bam" >trinity.sh
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam.bai
+module load python_3/3.6.6
+module load trinityrnaseq/2.8.4;module load salmon/0.10.1; sh runTrinity.sh AllStrandedRNASeq.bam
+
 
 
 #runTrinity.sh
 ################################################################################
 #!/bin/bash
 
+module load jellyfish2
+module load samtools
+module load salmon
+module load bowtie2
+module load java_8_sdk/1.8.0_121
+module load python_2/2.7.14
 module load trinityrnaseq/2.8.4
+
 
 bam="$1"
 out=$(basename ${bam%.*} |cut -f 1 -d "_")
 Trinity \
    --genome_guided_bam ${bam} \
+   --SS_lib_type RF \
    --max_memory 120G \
    --genome_guided_max_intron 30000 \
    --full_cleanup \
 --CPU 40
+
 ################################################################################
 
-#finished in 32hrs
-#how many transcripts did we get?
-grep -c ">" Trinity-GG.fasta
-110683
+
+##  A couple of processes died due to memory shortage,  ran separately
+module load jellyfish2
+module load samtools
+module load salmon
+module load bowtie2
+module load java_8_sdk/1.8.0_121
+module load python_2/2.7.14
+module load trinityrnaseq/2.8.4
+
+
+/software/7/apps/trinityrnaseq/2.8.4/util/support_scripts/../../Trinity --single "Dir_AllStrandedRNASeq.bam.+.sam.minC1.gff/13/74/55883420_56479821.trinity.reads" --output "Dir_AllStrandedRNASeq.bam.+.sam.minC1.gff/13/74/55883420_56479821.trinity.reads.out" --CPU 10 --max_memory 120G --SS_lib_type F --seqType fa --trinity_complete --full_cleanup
+/software/7/apps/trinityrnaseq/2.8.4/util/support_scripts/../../Trinity --single "Dir_AllStrandedRNASeq.bam.+.sam.minC1.gff/14/31/24198809_24586881.trinity.reads" --output "Dir_AllStrandedRNASeq.bam.+.sam.minC1.gff/14/31/24198809_24586881.trinity.reads.out" --CPU 10 --max_memory 120G --SS_lib_type F --seqType fa --trinity_complete --full_cleanup
+
+
 
 #map trinity transcripts back to genome
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/21_Trinity/trinity_out_dir
+
 module load gmap_gsnap/2017-03-17
-sh runGmap.sh SCNgenome /work/GIF/remkv6/Baum/04_Dovetail2Restart/12_Trinity/trinity_out_dir/ ../SCNgenome.fasta Trinity-GG.fasta
+sh runGmap.sh FinalGenomePilonReducedSoftMaskedRecode /home/rick.masonbrink/elk_bison_genomics/Masonbrink/21_Trinity/OldTrinityRun/ ../../23_strawberry/FinalGenomePilonReducedSoftMaskedRecode.fa Trinity-GG.fasta
+
 ###############################################################################
 #!/bin/bash
 
@@ -301,23 +376,118 @@ dbloc=$2
 dbfasta=$3
 query=$4
 gmap_build -d $dbname  -D $dbloc $dbfasta
-gmap -D $dbloc -d $dbname -B 5 -t 40  --input-buffer-size=1000000 --output-buffer-size=1000000 -f gff3_gene  $query >${dbname%.*}.${query%.*}.gff3
+gmap -D $dbloc -d $dbname -B 5 -t 16  --input-buffer-size=1000000 --output-buffer-size=1000000 -f gff3_match_cdna  $query >${dbname%.*}.${query%.*}.gff3
 ################################################################################
+
+
+
 ```
 
 ### run strawberry
 ```
 #/project/elk_bison_genomics/Masonbrink/23_strawberry/strawberry
 
-ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam
-ln -s ../17_Braker/01_AlignRNA/AllRNASEQ_sorted.bam.bai
-ln -s ../17_Braker/01_AlignRNA/FinalGenomePilonReduced.fa
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam
+ln -s ../17_Braker/11_AlignSoftmaskedRename/AllStrandedRNASeq.bam.bai
+ln -s ../17_Braker/11_AlignSoftmaskedRename/FinalGenomePilonReducedSoftMaskedRecode.fa
 
-ml minioonda
-source activate strawberry
-strawberry  -T strawberry.log  --no-quant -p 40 -v AllRNASEQ_sorted.bam
+ml miniconda; source activate strawberry; strawberry  -T strawberry.log  --rf --no-quant -p 40 -v AllStrandedRNASeq.bam
+```
 
-echo "ml miniconda; source activate strawberry; strawberry  -T strawberry.log  --no-quant -p 40 -v AllRNASEQ_sorted.bam" >strawberry.sh
+### Run Mikado
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/24_mikado
+
+#Transcriptome Assemblies
+ln -s ../23_strawberry/strawberry_assembled.gtf
+ln -s ../20_Class2/AllStrandedRNASeqClass2.gtf
+ln -s ../18_PortCullis/portcullis_out/2-junc/portcullis_all.junctions.bed
+ln -s ../17_Braker/11_AlignSoftmaskedRename/braker/augustus.hints.gff3
+ln -s  ../21_Trinity/trinity_out_dir/FinalGenomePilonReducedSoftMaskedRecode.Trinity-GG.gff3
+
+#for mikado blasting
+ln -s ../17_Braker/uniprot-cervus.fasta
+
+#genome
+ln -s ../23_strawberry/FinalGenomePilonReducedSoftMaskedRecode.fa
 
 
+# config script for mikado
+################################################################################
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=40
+#SBATCH -p medium
+#SBATCH -t 168:00:00
+#SBATCH -J mikado_0
+#SBATCH -o mikado_0.o%j
+#SBATCH -e mikado_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/24_mikado
+ml miniconda/3.6
+
+source activate mikado2
+
+
+#!/bin/bash
+#setup variables
+genome="FinalGenomePilonReducedSoftMaskedRecode.fa"
+bam="AllStrandedRNASeq.bam"
+list="list.txt"
+#run splice junction prediction
+junctions="portcullis_all.junctions.bed"
+#configure
+#mikado configure \
+   --list $list \
+   --reference $genome \
+   --mode permissive \
+   --scoring mammalian.yaml \
+   --junctions $junctions \
+     configuration.yaml
+#prepare
+mikado prepare \
+   --json-conf configuration.yaml
+#blast db
+makeblastdb \
+   -in uniprot-cervus.fasta \
+   -dbtype prot \
+   -parse_seqids
+#blast
+blastx \
+  -max_target_seqs 5 \
+   -num_threads 40 \
+   -query mikado_prepared.fasta \
+   -outfmt 5 \
+   -db uniprot-cervus.fasta \
+   -evalue 0.000001 2> blast.log | sed '/^$/d' > mikado.blast.xml
+blastxml=mikado.blast.xml
+#transdecoder
+TransDecoder.LongOrfs \
+   -t mikado_prepared.fasta
+TransDecoder.Predict \
+   -t mikado_prepared.fasta \
+   --cpu 40
+orfs=$(find $(pwd) -name "mikado_prepared.fasta.transdecoder.bed")
+#serialise
+
+mikado serialise \
+   --start-method spawn \
+   --procs 40 \
+   --blast_targets uniprot-cervus.fasta \
+   --json-conf configuration.yaml \
+   --xml ${blastxml} \
+   --orfs ${orfs}
+#pick
+mikado pick \
+   --start-method spawn \
+   --procs 40 \
+   --json-conf configuration.yaml \
+   --subloci_out mikado.subloci.gff3
+
+#serialize and pick had to be run a earlier version of mikado, as the current had issues with installation
+###################################################################################
 ```
