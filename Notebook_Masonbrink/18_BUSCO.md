@@ -1,0 +1,1 @@
+run_BUSCO.py -i FinalGenomePilonReduced.fa  -l /home/rick.masonbrink/elk_bison_genomics/Masonbrink/25_BUSCO/mammalia_odb9 -o test1 -m geno -c 39  -f --long --limit 6  --augustus_parameters '--AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/25_BUSCO/config'

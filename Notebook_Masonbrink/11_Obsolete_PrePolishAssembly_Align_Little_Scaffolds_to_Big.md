@@ -6,6 +6,9 @@
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/13_Little2Big2
 
 ln -s ../04_JuicerElk/01_3DNA/3d-dna/01_PostJBAssembly/FinalAssembly/3d-dna/FinalAssemblyFastaWithY.fasta
+grep ">" -c FinalAssemblyFastaWithY.fasta
+22557
+
 
 module load samtools
 samtools faidx FinalAssemblyFastaWithY.fasta &
@@ -29,7 +32,18 @@ echo "module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.fasta -o
 #get little scaff lengths
 bioawk -c fastx '{print $name,length($seq)}' LittleScaffs.fasta >LittleScaffLengths.txt
 
-fasta-splitter --n-parts 7 LittleScaffs.fasta
+
+
+#This took forever, so I split and blasted the remaining scaffolds
+fasta-splitter --n-parts 6 LittleScaffs.fasta
+module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.part-1.fasta  -outfmt 6 -num_threads 40 -dust no -max_target_seqs 5 -out LittleScaffs.part-1.fasta.blastout
+module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.part-2.fasta  -outfmt 6 -num_threads 40 -dust no -max_target_seqs 5 -out LittleScaffs.part-2.fasta.blastout
+module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.part-3.fasta  -outfmt 6 -num_threads 40 -dust no -max_target_seqs 5 -out LittleScaffs.part-3.fasta.blastout
+module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.part-4.fasta  -outfmt 6 -num_threads 40 -dust no -max_target_seqs 5 -out LittleScaffs.part-4.fasta.blastout
+module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.part-5.fasta  -outfmt 6 -num_threads 40 -dust no -max_target_seqs 5 -out LittleScaffs.part-5.fasta.blastout
+module load blast+;blastn -db BigScaffs.fasta -query LittleScaffs.part-6.fasta  -outfmt 6 -num_threads 40 -dust no -max_target_seqs 5 -out LittleScaffs.part-6.fasta.blastout
+
+
 #not sure if I used this one bc the blast file was too large
 less Small2Big.blastout|awk '{print $1}'|while read line; do grep -w $line LittleScaffLengths.txt; done >LengthsOrderedByBlast
 ```

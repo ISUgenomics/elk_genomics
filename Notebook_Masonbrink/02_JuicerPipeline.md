@@ -18,6 +18,7 @@ samtools flagstat -@ 40 lib_002.sorted.md.bam
 25488811 + 0 singletons (7.64% : N/A)
 125097186 + 0 with mate mapped to a different chr
 75127210 + 0 with mate mapped to a different chr (mapQ>=5)
+
 [rick.masonbrink@sn-cn-15-2 01_ExtractFastq]$ samtools flagstat -@ 40 lib_001.sorted.md.bam
 302679286 + 0 in total (QC-passed reads + QC-failed reads)
 0 + 0 secondary
@@ -32,7 +33,8 @@ samtools flagstat -@ 40 lib_002.sorted.md.bam
 36170483 + 0 singletons (11.95% : N/A)
 131992084 + 0 with mate mapped to a different chr
 87874904 + 0 with mate mapped to a different chr (mapQ>=5)
-[rick.masonbrink@sn-cn-15-2 01_ExtractFastq]$ samtools flagstat -@ 40 lib_003.sorted.md.bam
+
+samtools flagstat -@ 40 lib_003.sorted.md.bam
 367950046 + 0 in total (QC-passed reads + QC-failed reads)
 0 + 0 secondary
 0 + 0 supplementary
@@ -46,9 +48,6 @@ samtools flagstat -@ 40 lib_002.sorted.md.bam
 28194621 + 0 singletons (7.66% : N/A)
 138772472 + 0 with mate mapped to a different chr
 83321293 + 0 with mate mapped to a different chr (mapQ>=5)
-[rick.masonbrink@sn-cn-15-2 01_ExtractFastq]$ ^C
-[rick.masonbrink@sn-cn-15-2 01_ExtractFastq]$
-
 
 ```
 
@@ -58,7 +57,7 @@ samtools flagstat -@ 40 lib_002.sorted.md.bam
 
 for f in *bam ; do echo "module load picard/64/2.9.2; java -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I="$f" FASTQ="${f%.*}"R1.fq F2="${f%.*}"R2.fq FU="${f%.*}"_unpaired.fq" ;done >picard.sh
 #######################################################################################
- module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_001.sorted.md.bam FASTQ=lib_001.sorted.mdR1.fq F2=lib_001.sorted.mdR2.fq FU=lib_001.sorted.md_unpaired.fq
+module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_001.sorted.md.bam FASTQ=lib_001.sorted.mdR1.fq F2=lib_001.sorted.mdR2.fq FU=lib_001.sorted.md_unpaired.fq
 module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_002.sorted.md.bam FASTQ=lib_002.sorted.mdR1.fq F2=lib_002.sorted.mdR2.fq FU=lib_002.sorted.md_unpaired.fq
 module load picard/64/2.9.2; java -Xmx200G -Xms50G -jar /software/7/apps/picard/64/2.9.2/picard.jar SamToFastq I=lib_003.sorted.md.bam FASTQ=lib_003.sorted.mdR1.fq F2=lib_003.sorted.mdR2.fq FU=lib_003.sorted.md_unpaired.fq
 #######################################################################################
@@ -341,4 +340,122 @@ awk 'NR!=72954653' fixedmerged_nodups.txt >fixed2merged_nodups.txt
 
 #this issue is because the mapping information does not have a mapping site for restriction fragments in some chromosomes.  Just changing all values to dummy values, since I have only interest in assembly and 3d-dna is not using the fragment map
 awk '{$8="1";$4="0";print $0}' fixed2merged_nodups.txt >fixed3merged_nodups.txt
+```
+
+### Run 3d-dna
+```
+module load miniconda
+source activate 3d-dna
+module load java
+module load parallel
+cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna
+bash run-asm-pipeline.sh -i 100 /home/rick.masonbrink/elk_bison_genomics/Masonbrink/north_american_elk_15Jun2018_oY8t2.fasta /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/aligned/fixed3merged_nodups.txt
+```
+
+
+### Fix Scaffolds in Juicebox
+
+```
+I essentially tried to place all pseudomolecules in the same space by placing all unincorporated contigs at the end of each chromosome.  When all contigs greater than 10kb were placed, I edited each chromosome manually.  I followed the rule of only incorporating scaffolds to their site of highest signal, when signal was even between something repetitive and something non repetitive, I placed the contig in a the nonrepetitive region.   I kept repeats together when possible and only edited obvious misjoins, ~400 scaffolds.
+
+#exported assembly
+Final.assembly
+
+
+
+```
+
+### Seal and finalize assembly
+```
+/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna/01_PostJBAssembly/FinalAssembly/3d-dna
+
+###Mostly Ns in this one
+###ln -s ../../3d-dna/north_american_elk_15Jun2018_oY8t2.FINAL.FINAL.fasta
+ln -s ../../3d-dna/north_american_elk_15Jun2018_oY8t2.FINAL.mnd.txt
+ln -s ../../../north_american_elk_15Jun2018_oY8t2.FINAL.fasta
+samtools faidx north_american_elk_15Jun2018_oY8t2.FINAL.fasta
+
+
+module load miniconda
+conda init bash
+source activate 3d-dna
+module load java
+module load parallel
+cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna/01_PostJBAssembly/FinalAssembly/3d-dna
+sh run-asm-pipeline-post-review.sh -r Final.assembly -g 100 -s seal -i 100 --build-gapped-map north_american_elk_15Jun2018_oY8t2.FINAL.fasta north_american_elk_15Jun2018_oY8t2.FINAL.mnd.txt
+
+
+#Fasta did not generate on the initial attempt, while the hic and assembly file were correct.
+```
+
+### Figured out that I merged the Y and the X chromosomes, so I had to work it out in juicebox.
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna/01_PostJBAssembly/FinalAssembly/01_XYSplit3d-dna
+
+Copied in directory from ../3d-dna so I would not have to recreate the fasta database thingy.
+
+
+
+#run 3d-dna with seal.  #turns out that this was a poor choice that led to more splits. #also does not generate the fasta, but the assembly and hic files were of appropriate size.
+
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=40
+#SBATCH --partition=long
+#SBATCH -t 168:00:00
+#SBATCH -J finalizeAssembly1_0
+#SBATCH -o finalizeAssembly1_0.o%j
+#SBATCH -e finalizeAssembly1_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+module load miniconda
+conda init bash
+source activate 3d-dna
+module load java
+module load parallel
+cd /home/rick.masonbrink/elk_bison_genomics/Masonbrink/04_JuicerElk/01_3DNA/3d-dna/01_PostJBAssembly/FinalAssembly/01_XYSplit3d-dna
+sh run-asm-pipeline-post-review.sh -r RemoveY13.assembly -g 100 -s seal -i 100  FirstScaffoldsStep0.FINAL.fasta north_american_elk_15Jun2018_oY8t2.mnd.txt
+scontrol show job $SLURM_JOB_ID
+
+
+#Perhaps run it like this #Still did not get a proper fasta
+sh run-asm-pipeline-post-review.sh -r RemoveY13.assembly -g 100 -s finalize -i 100  FirstScaffoldsStep0.final.fasta north_american_elk_15Jun2018_oY8t2.mnd.txt
+
+
+#Trying this
+sh run-asm-pipeline-post-review.sh -r RemoveY13.assembly -g 100 -s finalize -i 100  ../3d-dna/FirstScaffoldsStep0.FINAL.fasta north_american_elk_15Jun2018_oY
+#no effect.  
+
+#had to generate the fasta manually
+
+bash finalize/construct-fasta-from-asm.sh FirstScaffoldsStep0.final.final.cprops FirstScaffoldsStep0.final.final.asm ../3d-dna/FirstScaffoldsStep0.FINAL.fasta >test &
+
+#this left some gaps in the sequence, so I had to make it one line fasta tab, and then correct it as below.
+awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < test >test2
+tr "\t" "\n" < test2 | fold -w 60 >test3
+mv test3 FirstScaffoldsStep0.final.FINAL.fasta
+
+
+#is it the correct size?
+bioawk -c fastx '{print $name,length($seq)}' FirstScaffoldsStep0.final.FINAL.fasta |awk '{print $2}' |summary.sh
+Total:  2,559,916,354
+Count:  22,564
+Mean:   113,451
+Median: 387
+Min:    0
+Max:    145,554,050
+
+
+bioawk -c fastx '{print $name,length($seq)}' FirstScaffoldsStep0.FINAL.fasta |awk '{print $2}' |summary.sh
+Total:  2,560,751,668
+Count:  22,577
+Mean:   113,423
+Median: 387
+Min:    119
+Max:    153,425,878
+
+#This is a negligable difference that will be fixed by pilon
 ```

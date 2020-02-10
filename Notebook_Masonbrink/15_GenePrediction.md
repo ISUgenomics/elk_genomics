@@ -491,3 +491,248 @@ mikado pick \
 #serialize and pick had to be run a earlier version of mikado, as the current had issues with installation
 ###################################################################################
 ```
+
+## Run mikado again, add bovine models
+
+#Align Pecora infraorder unprot models to genome
+```
+#/work/GIF/remkv6/Elk/24_mikado/01_mikado2/01_AlignPecora
+
+Retrieved all manually annotated proteins from Pecora infraorder (taxon that relates cervus, bovidae) using Uniprot
+#7123 sequences from Pecora which includes Antilocapridae (pronghorn), Bovidae (cattle), Cervidae (elk), Giraffidae (giraffe), and Moschidae (musk deer). 6008/7123 were from Bovidae.
+
+echo "ml miniconda3; source activate Genomethreader; gth -gff3out -skipalignmentout  -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein PecoraUniprot.fasta" >genomethreader.sh
+
+less genomethreader_0.o818573 |awk 'NR<216692 {print NR,$0}' >GTH.gff3
+
+```
+
+### Remove poorly expressed genes with 5 or less rnaseq reads mapping
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/29_Expression
+cat *genes.txt |awk '$7>5{print $1}' |sort|uniq|grep -w -f - mikado.loci.gff3.grepmod >ExpressedGenes.mikado.loci.gff3.grepmod
+
+```
+### Remove transposable element genes
+```
+bedtools intersect -v -wo -a ExpressedGenes.mikado.loci.gff3.grepmod -b <(less ../17_Braker/02_RepeatMasker/FinalGenomePilonReduced.fa.out.gff |sed 's/HiC_scaffold_//g' |sed 's/_pilon//g' |grep -v "rich" |grep -v "(" ) |awk '$3=="CDS" {print $9}' |sort|uniq >ExpressedRepetmodNoGene.list
+
+
+```
+
+### Create modified gff files for mikado run 2
+```
+#/work/GIF/remkv6/Elk/24_mikado/01_mikado2
+
+#Make a grep database to get exact gene name matches
+awk '$3=="gene"' ../mikado.loci.gff3 |sed 's/ID=/ID=\t/1' |sed 's/;/\t;/1' >MikadoGeneGrepMod.gff3
+
+#grep exact gene names that are expressed above 5 reads and not repeats
+grep -w -f ExpressedRepetmodNoGene.list MikadoGeneGrepMod.gff3  >ExpressedNORepeatGenesGrepMod.gff3 &
+
+#Get all of the info for these genes from the gff
+
+bedtools intersect -wo -a ../mikado.loci.gff3 -b ExpressedNORepeatGenesGrepMod.gff3 |sed 's/ID=\t/ID=/1' |sed 's/\t;/;/1' |cut -f 1-9> ExpressedNORepeatMikado.l
+oci.gff3
+#get the same set of overlapping genes from the braker prediction
+bedtools intersect -wo -a ExpressedNORepeatMikado.loci.gff3 -b ../augustus.hints.gff3|cut -f 1-9 > ExpressedNORepeataugustus.hints.gff3
+
+
+# create the list.txt
+###############################################################################
+ExpressedNORepeatMikado.loci.gff3       mi      False   0.5
+ExpressedNORepeataugustus.hints.gff3    au      True
+GTH.gff3        gt      False   -0.5
+###############################################################################
+
+mikado_0.sub
+###############################################################################
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=16
+#SBATCH -p short_1node
+#SBATCH -t 96:00:00
+#SBATCH -J mikado_0
+#SBATCH -o mikado_0.o%j
+#SBATCH -e mikado_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+
+
+cd /work/GIF/remkv6/Elk/24_mikado/01_mikado2
+
+ml miniconda3/4.3.30-qdauveb
+conda init bash
+source activate mikado
+
+
+
+#!/bin/bash
+#setup variables
+genome="FinalGenomePilonReducedSoftMaskedRecode.fa"
+bam="AllStrandedRNASeq.bam"
+list="list.txt"
+#run splice junction prediction
+junctions="portcullis_all.junctions.bed"
+#configure
+mikado configure \
+   --list $list \
+   --reference $genome \
+   --mode permissive \
+   --scoring mammalian.yaml \
+   --junctions $junctions \
+     configuration.yaml
+#prepare
+mikado prepare \
+   --json-conf configuration.yaml
+#blast db
+makeblastdb \
+   -in uniprot-cervus.fasta \
+   -dbtype prot \
+   -parse_seqids
+#blast
+blastx \
+  -max_target_seqs 5 \
+   -num_threads 16 \
+   -query mikado_prepared.fasta \
+   -outfmt 5 \
+   -db uniprot-cervus.fasta \
+   -evalue 0.000001 2> blast.log | sed '/^$/d' > mikado.blast.xml
+blastxml=mikado.blast.xml
+#transdecoder
+TransDecoder.LongOrfs \
+   -t mikado_prepared.fasta
+TransDecoder.Predict \
+   -t mikado_prepared.fasta \
+   --cpu 16
+orfs=$(find $(pwd) -name "mikado_prepared.fasta.transdecoder.bed")
+#serialise
+mikado serialise \
+   --start-method spawn \
+   --procs 16 \
+   --blast_targets uniprot-cervus.fasta \
+   --json-conf configuration.yaml \
+   --xml ${blastxml} \
+   --orfs ${orfs}
+#pick
+mikado pick \
+   --start-method spawn \
+   --procs 16 \
+   --json-conf configuration.yaml \
+   --subloci_out mikado.subloci.gff3
+```
+### Mikado Round2 Results
+```
+#/work/GIF/remkv6/Elk/24_mikado/
+
+#Round 1 ncRNA
+awk '$3=="ncRNA"' mikado.loci.gff3 |wc
+ 146763 1320867 23746487
+
+#Round 1 Gene size
+awk '$3=="gene"' mikado.loci.gff3 |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Count:  50,516
+Mean:   19,583
+Median: 1,977
+Min:    296
+Max:    2,065,707
+
+#Round 1 MRNA size
+awk '$3=="mRNA"' mikado.loci.gff3 |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  1,664,874,548
+Count:  61,729
+Mean:   26,970
+Median: 4,063
+Min:    296
+Max:    2,065,707
+
+#Round 1 CDS size
+awk '$3=="CDS"' mikado.loci.gff3 |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  68,877,390
+Count:  369,686
+Mean:   186
+Median: 131
+Min:    0
+Max:    14,486
+
+
+
+
+#/work/GIF/remkv6/Elk/24_mikado/01_mikado2
+
+
+Round 2 ncRNA
+awk '$3=="ncRNA"' mikado.loci.gff3 |wc
+   7682   69138 1116828
+
+#Round 2 Gene size
+awk '$3=="gene"' mikado.loci.gff3 |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  704,673,933
+Count:  29,188
+Mean:   24,142
+Median: 4,915
+Min:    227
+Max:    2,065,707
+
+#Round 2 MRNA size
+awk '$3=="mRNA"' mikado.loci.gff3 |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  1,135,003,818
+Count:  36,595
+Mean:   31,015
+Median: 8,093
+Min:    227
+Max:    2,065,707
+
+#Round 2 CDS size
+awk '$3=="CDS"' mikado.loci.gff3 |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  45,911,195
+Count:  260,892
+Mean:   175
+Median: 126
+Min:    0
+Max:    14,486
+
+
+# Cervus elaphus gene stats
+
+#Gene sizes
+awk '$3=="gene"' GCA_002197005.1_CerEla1.0_genomic.gff |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  539,248,825
+Count:  22,846
+Mean:   23,603
+Median: 6,939
+Min:    14
+Max:    4,711,804
+
+#mRNA sizes
+awk '$3=="mRNA"' GCA_002197005.1_CerEla1.0_genomic.gff |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  538,954,909
+Count:  19,243
+Mean:   28,007
+Median: 9,383
+Min:    179
+Max:    4,711,804
+
+#CDS sizes
+awk '$3=="CDS"' GCA_002197005.1_CerEla1.0_genomic.gff |awk '{if($5>$4){print $5-$4} else {print $4-$5}}' |summary.sh
+Total:  20,754,459
+Count:  124,985
+Mean:   166
+Median: 125
+Min:    0
+Max:    9,441
+
+
+```
+### Filter round2 models for transposons
+```
+#/work/GIF/remkv6/Elk/30_EDTA/EDTA
+
+#Estimate of what will be removed
+bedtools intersect -wo -a <(awk '$3=="CDS"' ../../24_mikado/01_mikado2/mikado.loci.gff3) -b FinalGenomePilonReducedSoftMaskedRecode.fa.mod.EDTA.intact.gff |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
+    921     921   12755
+
+```

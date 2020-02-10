@@ -42,7 +42,7 @@ tar -xvf 8_9145_01_8Bull-OSMn_HG73W_1014.tar
 
 
 ```
-### Set up alignment
+### Set up alignment for DNA-seq
 ```
  paste <(ls -1 *R1* ) <(ls -1 *R2*) |while read line; do echo "sh runPilon.sh stupid /home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_PilonPairedEnd FinalGenome.fa "$line;done >align.sh
 
@@ -63,6 +63,44 @@ sh runPilon.sh stupid /home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_Pil
 sh runPilon.sh stupid /home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_PilonPairedEnd FinalGenome.fa WY7-Pine_S4_L004_R1_001.fastq.bz2 WY7-Pine_S4_L004_R2_001.fastq.bz2
 sh runPilon.sh stupid /home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_PilonPairedEnd FinalGenome.fa WY8-Pine_S5_L005_R1_001.fastq.bz2 WY8-Pine_S5_L005_R2_001.fastq.bz2
 
+################################################################################################################################################
+
+#runPilon.sh
+###############################################################################
+#!/bin/bash
+
+#You must provide the following. Note variable DBDIR does not need a "/" at the end.
+# sh runPilon.sh LongReads.fastq /work/GIF/remkv6/files genome.fa ShortReadsR1.fq ShortReadsR2.fq
+
+
+PBReadsFq="$1"
+DIR="$2"
+GENOME="$3"
+R1_FQ="$4"
+R2_FQ="$5"
+
+module load hisat2
+#hisat2-build ${GENOME} ${GENOME%.*}
+hisat2 -p 40 -x ${GENOME%.*} -1 $R1_FQ -2 $R2_FQ -S ${R1_FQ%.*}.sam
+module load samtools
+samtools view --threads 40 -b -o ${GENOME%.*}.${R1_FQ%.*}.bam ${GENOME%.*}.${R1_FQ%.*}.sam
+samtools sort -m 3G -o ${GENOME%.*}.${R1_FQ%.*}_sorted.bam -T Round3PilonPB_temp --threads 40 ${GENOME%.*}.${R1_FQ%.*}.bam
+samtools index ${GENOME%.*}.${R1_FQ%.*}_sorted.bam
+#samtools merge -@ 40 -m TEMP AllReads.bam *_sorted.bam
+
+#module load minimap2
+#minimap2 -L -ax map-pb ${GENOME} ${PBReadsFq}  >${GENOME%.*}.${PBReadsFq%.*}.sam
+
+#module load samtools
+#samtools view --threads 40 -b -o ${GENOME%.*}.${PBReadsFq%.*}.bam ${GENOME%.*}.${PBReadsFq%.*}.sam
+#samtools sort -m 3G -o ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam -T Round3PilonPB_temp --threads 40 ${GENOME%.*}.${PBReadsFq%.*}.bam
+#samtools index ${GENOME%.*}.${PBReadsFq%.*}_sorted.bam
+
+#module load pilon
+
+#java -Xmx120g -Djava.io.tmpdir=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/07_blobtools2juiced/TEMP -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome ${GENOME}  --frags AllReads.bam --output ${GENOME%.*}.Pilon --outdir ${DIR} --changes --fix all --threads 40 --mingap 0 --chunksize 100000
+
+################################################################################################################################################
 ```
 
 
@@ -82,30 +120,31 @@ sh runPilon.sh stupid /home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_Pil
 89.97% overall alignment rate
 90.36% overall alignment rate
 90.47% overall alignment rate
+```
 
-
-
+### Fix the conversion and sort
+```
 #the script failed to run past alignment stage, as it was naming the temp files the same for each script.  
 #This is what should have been run
-
 
 for f in *sam; do mkdir ${f%.*}_temp;done
 
 for f in *sam; do echo "module load samtools; samtools view --threads 20 -b -o "${f%.*}".bam " $f "; samtools sort -m 3G -o "${f%.*}"_sorted.bam -T ${f%.*}_temp --threads 20 "${f%.*}".bam; samtools index "${f%.*}".bam";done >BamNSort.sh
 
-
-
 #Sams got converted to bams, so just need sorting.
 #Coordinate sort and index
 for f in *sam; do echo "module load samtools;samtools sort -m 3G -o "${f%.*}"_sorted.bam -T ${f%.*}_temp --threads 20 "${f%.*}".bam; samtools index "${f%.*}".bam";done >SortNIndex.sh
+
 ```
 
 ### Need to cap the number of reads aligning to regions of the genome to prevent memory issues.  
 ```
-#just a test
+Found an easy way to cap coverage with http://lindenb.github.io/jvarkit/Biostar154220.html
+
+#just a test on one bam
 module load miniconda; source activate my_root; module load java/11.0.2;module load samtools|java -Djava.io.tmpdir=TEMP/ -Xmx120g -jar ../11_PolishGenomeWithCCS/jvarkit/dist/sortsamrefname.jar 8Bull-OSMn_S4_L007_R1_001.fastq.bam |java -jar jvarkit/dist/biostar154220.jar  -n 100  |samtools sort -o 8Bull-OSMn_S4_L007_R1_001.fastq_test.bam -
 
-#adapt to all bam files
+#adapt to all bam files -- max of 30x coverage for each bam
 ls *bai |sed 's/\.bai//g'|while read line; do echo "module load miniconda; source activate my_root; module load java/11.0.2;module load samtools;java -Djava.io.tmpdir="${line%.*}"_TEMP/ -Xmx120g -jar ../11_PolishGenomeWithCCS/jvarkit/dist/sortsamrefname.jar --samoutputformat BAM "$line" |java -jar jvarkit/dist/biostar154220.jar  --samoutputformat BAM -n 30  |samtools sort -o "${line%.*}".reduced.bam - ";done >ReduceBams.sh
 ```
 
@@ -118,13 +157,16 @@ ls -lrth *bai |awk '{print $9}' |sed 's/\.bai//g' |while read line;do echo "--fr
 #Another test
 ls -1 *reduced* |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx1020g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome OurElkMitochondria.fasta "$0" --unpaired  ../11_PolishGenomeWithCCS/FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
 
+#grabs all the bams
 ls -1 *reduced* |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
-
+```
 
 
 
 
 #### Split scaffolds for pilon ####
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_PilonPairedEnd/01_SplitForPilon
 
 ln -s ../FinalGenome.fa
 fasta-splitter.pl --n-parts 36 FinalGenome.fa
@@ -137,8 +179,10 @@ ln -s ../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam.bai
 
 
 for f in *bam; do mkdir ${f%.*}_temp; done
+```
 
-
+### Create pilon run scripts for each scaffold with reduced bam coverage of PE reads and all CCS reads
+```
 #use this to make script below
 ls -1 *reduced.bam |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /
 software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.f
@@ -199,7 +243,7 @@ Min:    0
 Max:    5,789
 
 
-#How many of the nucleotides were confirmed by pilon?  -- still missing scaff_16
+#How many of the nucleotides were confirmed by pilon?  -- still missing part_16
 
 #total confirmed
 cat Pilon_*.o* |grep "Confirmed" |awk '{print $2}' |summary.sh
@@ -223,7 +267,8 @@ Max:    100,000
 So far, 99.18% confirmed
 ```
 
-### Hi-C_scaffold_16 timed out after 48hrs on a high mem node
+### Hi-C_scaffold_16 timed out after 48hrs on a high mem node splitting to 100kb chunks, only using one paired end bam and CCS to polish
+The process still hung -- see masking below
 
 ```
 #split and run pilon on the 100kb parts
@@ -264,6 +309,7 @@ ln -s ../../../11_PolishGenomeWithCCS/FinalGenome.AllCCSReads_sorted.bam.bai
 
 ### Try to mask the ribosomal array so Pilon will move
 ```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/14_PilonPairedEnd/01_SplitForPilon/02_MaskPart16
 
 less consensi.fa.classified |grep "Satellite" |sed 's/>//g' |sed 's/#/\t/g' |awk '{print $1}' |while read line; do grep -w $line FinalGenome.part-16.fa.out.gff; done |sort -k 4,5n |awk '{print $1,$4,$5}' |tr " " "\t" |bedtools merge -d 100000|awk '($3-$2)>2000' |bedtools complement -i - -g FinalGenome.part-16.length|bedtools makewindows -b - -w 50000 |sed 's/\t/:/1' |sed 's/\t/-/1' |tr "\n" "," |awk '{print $0}' |while read line; do echo "module load pilon;java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.part-16.fa  --frags WY7-Pine_S4_L004_R1_001.fastq_sorted.reduced.bam --frags WY8-Pine_S5_L005_R1_001.fastq_sorted.reduced.bam  --unpaired  FinalGenome.AllCCSReads_sorted.bam --output FinalGenome.part-16.Pilon.fa --outdir . --changes --fix all --threads 40 --targets "$line" --chunksize 50000";done >Pilon.sh
 
@@ -279,6 +325,16 @@ Mean:   18,835
 Median: 9,104
 Min:    1,001
 Max:    1,888,303
+
+#How much of the sequence could be confirmed with pilon
+bioawk -c fastx '{print $name, length($seq)}' FinalGenome.part-16.Pilon.fa.fasta |awk '{print $2}' |~/common_scripts/summary.sh
+Total:  49,260,024
+Count:  2,954
+Mean:   16,675
+Median: 10,450
+Min:    373
+Max:    50,287
+
 
 Finished.  REMEMBER NEXT TIME THAT PILON IS 1 COORDINATE BASED, NOT ZERO BASED.
 #changed the zero at the start coordinate, and pilon finished.

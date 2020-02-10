@@ -1,5 +1,4 @@
 # Polish XYSplit Elk genome
-Have best genome I could get out of juicebox including the splitting of the x and y, a bit of syntenic restructuring in areas with clear bowties but unclear resolutions. Placed an extra 20 scaffolds
 
 
 ### Gather files /structure
