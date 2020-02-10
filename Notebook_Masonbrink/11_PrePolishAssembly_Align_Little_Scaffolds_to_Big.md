@@ -143,26 +143,35 @@ Scaffolds less than 1kb were eliminated, scaffolds that were at least 80% covere
 ```
 cat *blastout|awk '$12>300'|awk '{print $1,$7,$8}' |cat - <(awk '{print $1,$4,$5}' 01_RepeatMasker/LittleScaffs.fasta.out.gff) |awk '{if($2>$3){print $1,$3,$2}else {print $1,$2,$3}}' |sort -k1,1V -k2,2n|tr " " "\t" |bedtools merge -d 1000 >LittleScaffoldRepeatBlastRepMasker.bed
 
+#count of the above
+less LittleScaffoldRepeatBlastRepMasker.bed |awk '{print $1}' |sort|uniq|wc
+  21915   21915  405769
 
+#just adding small contig lengths to the above
 less LittleScaffoldRepeatBlastRepMasker.bed |awk '{print $1}' |while read line; do grep -w $line LittleScaffLengths.txt;done |paste - LittleScaffoldRepeatBlastRepMasker.bed >ScaffLengthLittleScaffoldRepeatBlastRepMasker.bedlike
 
+#get the total length of blast+repeatmasker coordinates for each scaffold and scaffold lengths. # $name"\t"$seq_length"\t"$coverage
 
-
-#How many are left after removing those without rnaseq reads mapping
-awk '{print $1}' goThroughTheseByHand.bedlike|sort|uniq|while read line; do grep -w $line ../16_RNAseq/AllReads_GeneReadCounts.txt;done |awk '$7>0' |wc
-    901    6307   48165
-
-
-
-#get the total length of blast+repeatmasker coordinates for each scaffold and eliminate scaffolds with 80% coverage.
 awk -v lengths=0 '{if(name==$1) {count=($5-$4)+count;lengths=$2;name=$1} else if($1!=name) {print name,lengths,count;name=$1;lengths=$2;count=0;count=count+($5-$4)} }' ScaffLengthLittleScaffoldRepeatBlastRepMasker.bedlike >List2refine.bedlike
 
+
+#how many removed via no unique rnaseq reads mapping?
+awk '$7>0 {print $1}' ../16_RNAseq/AllReads_GeneReadCounts.txt |while read line; do grep -w $line List2refine.bedlike;done |wc
+   1403    4209   38826
+
+#remove contigs that have zero unique rnaseq reads mapping, 90% coverage and 1kb or smaller.
 awk '$7>0 {print $1}' ../16_RNAseq/AllReads_GeneReadCounts.txt |while read line; do grep -w $line List2refine.bedlike;done |awk '($3)<(.9*$2)' |awk '$2>1000' >goThroughTheseByHand.bedlike
 
-awk '{print $1}' goThroughTheseByHand.bedlike|sort|uniq|wc
-    458     458    8152
+#how many after eliminating by contig length and query coverage?
+awk '$7>0 {print $1}' ../16_RNAseq/AllReads_GeneReadCounts.txt |while read line; do grep -w $line List2refine.bedlike;done |awk '($3)<(.9*$2)' |awk '$2>1000' |wc
+    559    1677   15695
+
+#contig count of the above after manual removal of contigs with high homology, but containing rearrangements
+less goThroughTheseByHand.bedlike |awk '{print $1}' |sort|uniq|wc
+        457     457    8136
 
 #Manually deleted HiC_scaffold_58 -- the concatenated mitochondria
+samtools faidx LittleScaffs.fasta.fai HiC_scaffold_58:23151-39579
 
 less goThroughTheseByHand.bedlike|awk '{print $1}' |while read line; do samtools faidx LittleScaffs.fasta $line; done >LittleScaffoldsRemaining.fasta
 
