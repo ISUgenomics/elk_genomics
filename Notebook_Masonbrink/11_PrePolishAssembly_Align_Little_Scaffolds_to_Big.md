@@ -141,6 +141,8 @@ Low complexity:     318        15981 bp    0.04 %
 
 Scaffolds less than 1kb were eliminated, scaffolds that were at least 80% covered in the large scaffolds were removed, and scaffolds that did not map a unique rnaseq read were removed.
 ```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/13_Little2Big2
+
 cat *blastout|awk '$12>300'|awk '{print $1,$7,$8}' |cat - <(awk '{print $1,$4,$5}' 01_RepeatMasker/LittleScaffs.fasta.out.gff) |awk '{if($2>$3){print $1,$3,$2}else {print $1,$2,$3}}' |sort -k1,1V -k2,2n|tr " " "\t" |bedtools merge -d 1000 >LittleScaffoldRepeatBlastRepMasker.bed
 
 #count of the above

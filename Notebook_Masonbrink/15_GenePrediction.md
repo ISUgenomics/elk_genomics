@@ -146,6 +146,15 @@ samtools sort  -o ${R1_FQ}_sorted.bam -T ${R1_FQ}_temp --threads 40 ${R1_FQ}.bam
 samtools index ${R1_FQ}_sorted.bam
 ################################################################################
 
+#Total number of rnaseq reads
+for f in  *log; do awk 'NR==1' $f ;done |awk '{print $1}' |~/common_scripts/summary.sh
+753,228,475
+#total rnaseq alignment percentages
+paste <(for f in  *log; do grep "overall" $f |sed 's/%//g' |awk '{print $1/100}';done ) <(for f in  *log; do awk 'NR==1' $f ;done |awk '{print $1}' )|awk '{print int($1*$2)}' |~/common_scripts/summary.sh
+Total:  590,127,938
+# So, 78.35% total alignment
+
+
 # Merge all of the bam files
 
 module load samtools; samtools merge -@ 40 AllRNASEQ.bam Elk-kidney_S25_L003_R1_001.fastq_sorted.bam Elk-kidney_S25_L004_R1_001.fastq_sorted.bam Elk-lung_S26_L003_R1_001.fastq_sorted.bam Elk-lung_S26_L004_R1_001.fastq_sorted.bam Elk-Mes-LN_S24_L003_R1_001.fastq_sorted.bam Elk-Mes-LN_S24_L004_R1_001.fastq_sorted.bam Elk-muscle_S21_L003_R1_001.fastq_sorted.bam Elk-muscle_S21_L004_R1_001.fastq_sorted.bam ElkpscapLN_S22_L003_R1_001.fastq_sorted.bam ElkpscapLN_S22_L004_R1_001.fastq_sorted.bam Elk-spleen_S23_L003_R1_001.fastq_sorted.bam Elk-spleen_S23_L004_R1_001.fastq_sorted.bam Undetermined_S0_L003_R1_001.fastq_sorted.bam Undetermined_S0_L004_R1_001.fastq_sorted.bam
@@ -532,8 +541,7 @@ grep -w -f ExpressedRepetmodNoGene.list MikadoGeneGrepMod.gff3  >ExpressedNORepe
 
 #Get all of the info for these genes from the gff
 
-bedtools intersect -wo -a ../mikado.loci.gff3 -b ExpressedNORepeatGenesGrepMod.gff3 |sed 's/ID=\t/ID=/1' |sed 's/\t;/;/1' |cut -f 1-9> ExpressedNORepeatMikado.l
-oci.gff3
+bedtools intersect -wo -a ../mikado.loci.gff3 -b ExpressedNORepeatGenesGrepMod.gff3 |sed 's/ID=\t/ID=/1' |sed 's/\t;/;/1' |cut -f 1-9> ExpressedNORepeatMikado.loci.gff3
 #get the same set of overlapping genes from the braker prediction
 bedtools intersect -wo -a ExpressedNORepeatMikado.loci.gff3 -b ../augustus.hints.gff3|cut -f 1-9 > ExpressedNORepeataugustus.hints.gff3
 
@@ -725,14 +733,38 @@ Median: 125
 Min:    0
 Max:    9,441
 
+#get proteins for busco
+ml cufflinks
+gffread mikado.loci.gff3 -g FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x mikado.transcripts.fasta -y mikado.proteins.fasta
+grep ">" mikado.proteins.fasta |sed 's/>//g' |sed 's/\./.\t/2' |sed 's/ /\t/g' |awk '$2==1 {print $1$2}' |cdbyank mikado.proteins.fasta.cidx >PrimaryIsoformsMikado.proteins.fasta
+grep -c ">" PrimaryIsoformsMikado.proteins.fasta
+29188
+
 
 ```
 ### Filter round2 models for transposons
 ```
-#/work/GIF/remkv6/Elk/30_EDTA/EDTA
+See 20_EDTA_Repeat_Prediction to see how this list was made.  Essentially bedtools intersect of CDS vs repeat to get gene names to remove
 
-#Estimate of what will be removed
-bedtools intersect -wo -a <(awk '$3=="CDS"' ../../24_mikado/01_mikado2/mikado.loci.gff3) -b FinalGenomePilonReducedSoftMaskedRecode.fa.mod.EDTA.intact.gff |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
-    921     921   12755
+ln -s ../../30_EDTA/EDTA/GenesToRemove.list
 
+#so I can match the genes by whole name
+awk '$3=="gene"' mikado.loci.gff3 |sed 's/ID=/ID=\t/1' |sed 's/;/\t;/1' >MikadoGeneGrepMod2.gff3
+
+#genes to keep, not repeats
+grep -w -v -f GenesToRemove.list AllGenes.list >Genes2Keep.list
+
+
+#match gene list by whole name
+grep -w -f Genes2Keep.list MikadoGeneGrepMod2.gff3  >Round2NORepeatGenesGrepMod.gff3 &
+
+bedtools intersect -wo -a mikado.loci.gff3 -b Round2NORepeatGenesGrepMod.gff3 |sed 's/ID=\t/ID=/1' |sed 's/\t;/;/1' |cut -f 1-9 |sort |uniq> FinalGenePrediction.gff3
+
+
+#final gene count
+awk '$3=="gene"' FinalGenePrediction.gff3 |wc
+  26460  238140 3917571
+
+ml cufflinks
+gffread FinalGenePrediction.gff3 -g FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x FinalGenePrediction.transcripts.fasta -y FinalGenePrediction.proteins.fasta
 ```
