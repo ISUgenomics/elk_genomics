@@ -529,7 +529,7 @@ bedtools intersect -v -wo -a ExpressedGenes.mikado.loci.gff3.grepmod -b <(less .
 
 ```
 
-### Create modified gff files for mikado run 2
+### Create modified gff files for mikado run 2 -- This run was missing 15% of the busco genes, so rerun with lower params for repeats
 ```
 #/work/GIF/remkv6/Elk/24_mikado/01_mikado2
 
@@ -767,4 +767,30 @@ awk '$3=="gene"' FinalGenePrediction.gff3 |wc
 
 ml cufflinks
 gffread FinalGenePrediction.gff3 -g FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x FinalGenePrediction.transcripts.fasta -y FinalGenePrediction.proteins.fasta
+```
+
+## Mikado Run 3 -- The last run was missing 15% of the busco genes, so rerun with lower params for repeats
+
+### Filter round 1 mikado for expression and repeats
+```
+#50% repeat coverage and greater than 1 unique read
+bedtools intersect -wo -f .5 -a mikado.loci.gff3 -b ../30_EDTA/EDTA/AllEDTARepeatAnnotations.gff |awk '$3=="gene"' |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1 |grep -v -w -f - <(awk '$7>1' 02_ExpressionCounts/GeneCounts ) |awk '{print $1}' >ExpressedGreater1Read50RepeatCovGenes.list
+wc ExpressedGreater1Read50RepeatCovGenes.list
+ 31062  31062 514106 ExpressedGreater1Read50RepeatCovGenes.list
+
+ #Make a grep database to get exact gene name matches ### duplicate of what was done for round 2
+ awk '$3=="gene"' ../mikado.loci.gff3 |sed 's/ID=/ID=\t/1' |sed 's/;/\t;/1' >MikadoGeneGrepMod.gff3
+
+#grep exact gene names that are expressed above 1 reads and not having 50% repeat coverage
+less ../ExpressedGreater1Read50RepeatCovGenes.list |sed 's/\./\t/2' |cut -f 1 | grep -w -f - MikadoGeneGrepMod.gff3 >ExpressedGreater1Read50RepeatCovGenesGrepMod.gff3 &
+
+
+
+
+ #Get all of the info for these genes from the gff
+
+ bedtools intersect -wo -a ../mikado.loci.gff3 -b ExpressedNORepeatGenesGrepMod.gff3 |sed 's/ID=\t/ID=/1' |sed 's/\t;/;/1' |cut -f 1-9> ExpressedNORepeatMikado.loci.gff3
+ #get the same set of overlapping genes from the braker prediction
+ bedtools intersect -wo -a ExpressedNORepeatMikado.loci.gff3 -b ../augustus.hints.gff3|cut -f 1-9 > ExpressedNORepeataugustus.hints.gff3
+
 ```

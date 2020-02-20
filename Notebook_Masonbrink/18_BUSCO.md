@@ -1,6 +1,6 @@
 # Assess genome completeness using BUSCO, benchmarking universal single copy orthologs
 
-### Busco genome mode
+### Busco3 genome mode
 ```
 run_BUSCO.py -i FinalGenomePilonReduced.fa  -l /home/rick.masonbrink/elk_bison_genomics/Masonbrink/25_BUSCO/mammalia_odb9 -o test1 -m geno -c 39  -f --long --limit 6  --augustus_parameters '--AUGUSTUS_CONFIG_PATH=/home/rick.masonbrink/elk_bison_genomics/Masonbrink/25_BUSCO/config'
 
@@ -17,7 +17,7 @@ INFO    4104 Total BUSCO groups searched
 
 ```
 
-### BUSCO genome mode Full run
+### BUSCO3 genome mode Full run
 
 ```
 #/work/GIF/remkv6/Elk/31_busco
@@ -37,7 +37,7 @@ INFO    171 Missing BUSCOs (M)
 INFO    4104 Total BUSCO groups searched
 
 ```
-### BUSCO protein mode Full run
+### BUSCO3 protein mode Full run
 ```
 #/work/GIF/remkv6/Elk/31_busco/01_peptideBusco
 
@@ -59,8 +59,74 @@ INFO    4104 Total BUSCO groups searched
 
 ```
 
-### BUSCO 4
+### BUSCO 4 Genome mode
 ```
-ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config; busco -i FinalGenomePilonReducedSoftMaskedRecode.fa --autolineage-euk -o GenomeBUSCO -m geno -c 15 -f --augustus_species CervusCanadensis3
+cp -rf /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config/spec
+ies/CervusCanadensis3/ ~/.conda/pkgs/augustus-3.2.3-boost1.60_0/config/species/.
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i FinalGenomePilonReducedSoftMaskedRecode.fa --autolineage-euk -o GenomeBUSCO4 -m geno -c 15 -f --augustus_species CervusCanadensis3
+
+```
+
+### BUSCO 4 Protein Mode Final Primary Annotations
+```
+
+ln -s ../../../24_mikado/01_mikado2/FinalGenePrediction.proteins.fasta
+ml cdbfasta
+cdbfasta FinalGenePrediction.proteins.fasta
+
+#get only primary isoforms to prevent artifactual duplicated buscos
+less FinalGenePrediction.proteins.fasta |awk '{print $1}' |grep ">" |sed 's/>//g' |grep "\.1" |cdbyank FinalGenePrediction.proteins.fasta.cidx >PrimaryIsoformsFinalGenePrediction.proteins.fasta
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i FinalGenomePilonReducedSoftMaskedRecode.fa --autolineage-euk -o GenomeBUSCO4 -m prot -c 15 -f --augustus_species CervusCanadensis3
+
+
+INFO:   Running BUSCO using lineage dataset eukaryota_odb10 (eukaryota, 2019-11-20)
+INFO:   ***** Run HMMER on gene sequences *****
+INFO:   Running 255 job(s) on hmmsearch
+INFO:   [hmmsearch]     26 of 255 task(s) completed
+INFO:   [hmmsearch]     51 of 255 task(s) completed
+INFO:   [hmmsearch]     77 of 255 task(s) completed
+INFO:   [hmmsearch]     102 of 255 task(s) completed
+INFO:   [hmmsearch]     128 of 255 task(s) completed
+INFO:   [hmmsearch]     153 of 255 task(s) completed
+INFO:   [hmmsearch]     179 of 255 task(s) completed
+INFO:   [hmmsearch]     204 of 255 task(s) completed
+INFO:   [hmmsearch]     230 of 255 task(s) completed
+INFO:   [hmmsearch]     255 of 255 task(s) completed
+INFO:   Results:        C:77.2%[S:68.2%,D:9.0%],F:5.5%,M:17.3%,n:255
+
+```
+
+### BUSCO 4 on Protein mode on Initial Primary annotations
+```
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/02_ProteinBusco4MikadoRound1NoFilter
+
+
+ln -s ../../../24_mikado/01_mikado2/FinalGenePrediction.proteins.fasta
+ml cdbfasta
+cdbfasta FinalGenePrediction.proteins.fasta
+
+#get only primary isoforms to prevent artifactual duplicated buscos
+less FinalGenePrediction.proteins.fasta |awk '{print $1}' |grep ">" |sed 's/>//g' |grep "\.1" |cdbyank FinalGenePrediction.proteins.fasta.cidx >PrimaryIsoformsFinalGenePrediction.proteins.fasta
+
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i PrimaryIsoformsMikado.proteins.fasta --auto-lineage-euk -o ProtBUSCO4 -m prot -c 15 -f --augustus_species CervusCanadensis3
+
+
+INFO:   Running BUSCO using lineage dataset eukaryota_odb10 (eukaryota, 2019-11-20)
+INFO:   ***** Run HMMER on gene sequences *****
+INFO:   Running 255 job(s) on hmmsearch
+INFO:   [hmmsearch]     26 of 255 task(s) completed
+INFO:   [hmmsearch]     51 of 255 task(s) completed
+INFO:   [hmmsearch]     77 of 255 task(s) completed
+INFO:   [hmmsearch]     102 of 255 task(s) completed
+INFO:   [hmmsearch]     128 of 255 task(s) completed
+INFO:   [hmmsearch]     153 of 255 task(s) completed
+INFO:   [hmmsearch]     179 of 255 task(s) completed
+INFO:   [hmmsearch]     204 of 255 task(s) completed
+INFO:   [hmmsearch]     230 of 255 task(s) completed
+INFO:   [hmmsearch]     255 of 255 task(s) completed
+INFO:   Results:        C:91.8%[S:80.0%,D:11.8%],F:6.3%,M:1.9%,n:255
 
 ```
