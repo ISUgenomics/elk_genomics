@@ -773,24 +773,139 @@ gffread FinalGenePrediction.gff3 -g FinalGenomePilonReducedSoftMaskedRecode.fa -
 
 ### Filter round 1 mikado for expression and repeats
 ```
+#/work/GIF/remkv6/Elk/24_mikado/01_mikado2
+
 #50% repeat coverage and greater than 1 unique read
-bedtools intersect -wo -f .5 -a mikado.loci.gff3 -b ../30_EDTA/EDTA/AllEDTARepeatAnnotations.gff |awk '$3=="gene"' |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1 |grep -v -w -f - <(awk '$7>1' 02_ExpressionCounts/GeneCounts ) |awk '{print $1}' >ExpressedGreater1Read50RepeatCovGenes.list
+bedtools intersect -wo -f .5 -a ../mikado.loci.gff3 -b ../../30_EDTA/EDTA/AllEDTARepeatAnnotations.gff |awk '$3=="gene"' |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1 |grep -v -w -f - <(awk '$7>1' ../02_ExpressionCounts/GeneCounts ) |awk '{print $1}' >../ExpressedGreater1Read50RepeatCovGenes.list
 wc ExpressedGreater1Read50RepeatCovGenes.list
  31062  31062 514106 ExpressedGreater1Read50RepeatCovGenes.list
 
- #Make a grep database to get exact gene name matches ### duplicate of what was done for round 2
- awk '$3=="gene"' ../mikado.loci.gff3 |sed 's/ID=/ID=\t/1' |sed 's/;/\t;/1' >MikadoGeneGrepMod.gff3
 
-#grep exact gene names that are expressed above 1 reads and not having 50% repeat coverage
-less ../ExpressedGreater1Read50RepeatCovGenes.list |sed 's/\./\t/2' |cut -f 1 | grep -w -f - MikadoGeneGrepMod.gff3 >ExpressedGreater1Read50RepeatCovGenesGrepMod.gff3 &
+#Filter repeat genes with mikado scripts
+
+#genes to remove
+bedtools intersect -wo -f .5 -a ../mikado.loci.gff3 -b ../../30_EDTA/EDTA/AllEDTARepeatAnnotations.gff |awk '$3=="gene"' |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1 >GenesToRemove.test
+
+wc GenesToRemove.test
+ 9015   9015 131210 GenesToRemove.test
+#must be transcript"\t"gene
+less GenesToRemove.test |awk '{print $1".1\t"$1}' > GenesToRemoveFixed.test
+
+ml miniconda3
+source activate mikado
+mikado util grep -v GenesToRemoveFixed.test ../mikado.loci.gff3 RemoveBadGenes.mikado.loci.gff3
+
+#Filter nonexpressed genes with mikado scripts
+#/work/GIF/remkv6/Elk/24_mikado/02_ExpressionCounts
+less GeneCounts |awk '$7=="0" {print $1}' |sed 's/\./\t/2' |awk '{print $1"."$2"\t"$1}' >NotExpressed.list
+
+#/work/GIF/remkv6/Elk/24_mikado/01_mikado2
+ln -s ../02_ExpressionCounts/NotExpressed.list
+
+mikado util grep -v NotExpressed.list RemoveBadGenes.mikado.loci.gff3 RemoveBadGenesNonExpressedGenes.mikado.loci.gff3
+
+awk '$3=="gene" ' RemoveBadGenesNonExpressedGenes.mikado.loci.gff3 |wc
+  31832  286488 4752528
+
+#grab the corresponding augustus genes
+
+
+bedtools intersect -wo  -b RemoveBadGenesNonExpressedGenes.mikado.loci.gff3 -a ../augustus.hints.gff3|cut -f 1-9 |sort|uniq >unsortedBrakerOverlap.gff3
+
+
+# Restart the Mikado RUn
+
+
+ git clone https://github.com/billzt/gff3sort.git
+
+perl gff3sort/gff3sort.pl --precise --chr_order natural unsortedBrakerOverlap.gff3 >SortedBrakerOverlap.gff3
+
+
+#list.txt
+###############################################################################
+RemoveBadGenesNonExpressedGenes.mikado.loci.gff3        mi      False
+unsortedBrakerOverlap.gff3      au      True
+GTH.gff3        gt      False
+################################################################################
+
+
+mikado_0.sub
+###############################################################################
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=16
+#SBATCH -p short_1node
+#SBATCH -t 96:00:00
+#SBATCH -J mikado_0
+#SBATCH -o mikado_0.o%j
+#SBATCH -e mikado_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+
+
+cd /work/GIF/remkv6/Elk/24_mikado/01_mikado2
+
+ml miniconda3/4.3.30-qdauveb
+conda init bash
+source activate mikado
 
 
 
-
- #Get all of the info for these genes from the gff
-
- bedtools intersect -wo -a ../mikado.loci.gff3 -b ExpressedNORepeatGenesGrepMod.gff3 |sed 's/ID=\t/ID=/1' |sed 's/\t;/;/1' |cut -f 1-9> ExpressedNORepeatMikado.loci.gff3
- #get the same set of overlapping genes from the braker prediction
- bedtools intersect -wo -a ExpressedNORepeatMikado.loci.gff3 -b ../augustus.hints.gff3|cut -f 1-9 > ExpressedNORepeataugustus.hints.gff3
-
+#!/bin/bash
+#setup variables
+genome="FinalGenomePilonReducedSoftMaskedRecode.fa"
+bam="AllStrandedRNASeq.bam"
+list="list.txt"
+#run splice junction prediction
+junctions="portcullis_all.junctions.bed"
+#configure
+mikado configure \
+   --list $list \
+   --reference $genome \
+   --mode permissive \
+   --scoring mammalian.yaml \
+   --junctions $junctions \
+     configuration.yaml
+#prepare
+mikado prepare \
+   --json-conf configuration.yaml
+#blast db
+makeblastdb \
+   -in uniprot-cervus.fasta \
+   -dbtype prot \
+   -parse_seqids
+#blast
+blastx \
+  -max_target_seqs 5 \
+   -num_threads 16 \
+   -query mikado_prepared.fasta \
+   -outfmt 5 \
+   -db uniprot-cervus.fasta \
+   -evalue 0.000001 2> blast.log | sed '/^$/d' > mikado.blast.xml
+blastxml=mikado.blast.xml
+#transdecoder
+TransDecoder.LongOrfs \
+   -t mikado_prepared.fasta
+TransDecoder.Predict \
+   -t mikado_prepared.fasta \
+   --cpu 16
+orfs=$(find $(pwd) -name "mikado_prepared.fasta.transdecoder.bed")
+#serialise
+mikado serialise \
+   --start-method spawn \
+   --procs 16 \
+   --blast_targets uniprot-cervus.fasta \
+   --json-conf configuration.yaml \
+   --xml ${blastxml} \
+   --orfs ${orfs}
+#pick
+mikado pick \
+   --start-method spawn \
+   --procs 16 \
+   --json-conf configuration.yaml \
+   --subloci_out mikado.subloci.gff3
+################################################################################   
 ```
