@@ -900,12 +900,14 @@ mikado serialise \
    --blast_targets uniprot-cervus.fasta \
    --json-conf configuration.yaml \
    --xml ${blastxml} \
-   --orfs ${orfs}
+   --orfs ${orfs} \
+   --mr .5
 #pick
 mikado pick \
    --start-method spawn \
    --procs 16 \
    --json-conf configuration.yaml \
-   --subloci_out mikado.subloci.gff3
+   --subloci_out mikado.subloci.gff3 \
+   --pad
 ################################################################################   
 ```
