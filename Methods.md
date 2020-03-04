@@ -38,3 +38,6 @@ A final version of predicted repeats was obtained using EDTA 1.7.9.
 
 ### Functional Gene Annotation
 Predicted transcript and protein fasta files were generated using Cufflinks gffread (2.2.1). Functional gene annotations were compiled using interproscan 5.27-66.0 and BLAST searches to NCBI NT and NR databases downloaded on 10-23-19, as well as swissprot/uniprot databases downloaded on 12/09/2019.
+
+### BUSCO
+Universal single copy orthologs were assessed using BUSCO 4.0, with the eukaryota_odb10 dataset. 
