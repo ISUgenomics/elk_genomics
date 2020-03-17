@@ -911,3 +911,46 @@ mikado pick \
    --pad
 ################################################################################   
 ```
+
+### Fix mikado to output only genes with start and stop codons
+```
+#/ptmp/GIF/remkv6/Olsen/Elk/01_mikado/01_FindMetStarts
+
+#class2
+#convert gtf to gff3
+gt gtf_to_gff3 ../AllStrandedRNASeqClass2.gtf >Class2.gff3
+#fix gff3 format
+gt gff3 -tidy -sortlines -fixregionboundaries Class2.gff3 >FixedClass2.gff3
+#add
+gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../FinalGenomePilonReducedSoftMaskedRecode.fa FixedClass2.gff3  >test
+gffread test -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x test.transcripts.fasta -y test.proteins.fasta
+mv test FixedClass2WithCDS.gff3
+mv test.proteins.fasta FixedClass2WithCDS.proteins.fasta
+
+
+# get proteins from strawberry transcripts
+gt gff3 -tidy -sortlines -fixregionboundaries strawberry_assembled.gff3 >Fixed.strawberry_assembled.gff3
+gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../FinalGenomePilonReducedSoftMaskedRecode.fa Fixed.strawberry_assembled.gff3 >AddCDS.strawberry_assembled.gff3
+gffread AddCDS.strawberry_assembled.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x strawberry.transcripts.fasta -y strawberry.proteins.fasta
+
+
+#get proteins from stringtie transcripts
+gt gtf_to_gff3 ../FinalGenomePilonReducedSoftMaskedRecode.gtf >../FinalGenomePilonReducedSoftMaskedRecode.gff3
+
+gt gff3 -tidy -sortlines -fixregionboundaries ../FinalGenomePilonReducedSoftMaskedRecode.gff3 >TidiedFinalGenomePilonReducedSoftMaskedRecode.gff3
+gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../FinalGenomePilonReducedSoftMaskedRecode.fa TidiedFinalGenomePilonReducedSoftMaskedRecode.gff3 >AddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3
+
+gffread AddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x Stringtie.transcripts.fasta -y Stringtie.proteins.fasta
+
+
+#Cervus hippelaphus Transcripts
+ gffread CervusTranscriptsMappedGmap.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x CervusHipTranscripts.fasta -y CervusHipProteins.fasta
+
+#braker
+
+#Trinity
+
+
+
+
+for f in *rotein.fasta; do echo "mkdir "$f"dir; cd "$f"dir; ln -s ../../FinalGenomePilonReducedSoftMaskedRecode.fa; ln -s ../"$f" ; ml miniconda3; source activate Genomethreader;gth -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein "$f" -gff3out -species nematode -skipalignmentout -o "${f%.*}"aln -force";done  >gth.sh
