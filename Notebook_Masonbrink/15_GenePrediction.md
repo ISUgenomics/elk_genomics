@@ -912,7 +912,9 @@ mikado pick \
 ################################################################################   
 ```
 
-### Fix mikado to output only genes with start and stop codons
+# Fix mikado to output only genes with start and stop codons
+
+### class2 transcripts
 ```
 #/ptmp/GIF/remkv6/Olsen/Elk/01_mikado/01_FindMetStarts
 
@@ -927,14 +929,33 @@ gffread test -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x t
 mv test FixedClass2WithCDS.gff3
 mv test.proteins.fasta FixedClass2WithCDS.proteins.fasta
 
+#instead lets just filter the gff and not remap the proteins
+awk '$3=="mRNA" {print $9}' FixedClass2WithCDS.gff3 |sed 's/ID=//g' |sed 's/Parent=//g' |sed 's/;/\t/g' |cut -f 1,2 |grep -f <(grep ">" FixedClass2WithCDS.proteins.fasta |sed 's/>//g'|awk '{print $1}') - >MikadoGrepClass2.list
 
-# get proteins from strawberry transcripts
+mikado util grep MikadoGrepClass2.list FixedClass2WithCDS.gff3 RefinedFixedClass2WithCDS.gff3
+
+#checked to make sure counts for list and gff3 match, they do
+```
+
+### strawberry transcripts
+```
 gt gff3 -tidy -sortlines -fixregionboundaries strawberry_assembled.gff3 >Fixed.strawberry_assembled.gff3
 gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../FinalGenomePilonReducedSoftMaskedRecode.fa Fixed.strawberry_assembled.gff3 >AddCDS.strawberry_assembled.gff3
 gffread AddCDS.strawberry_assembled.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x strawberry.transcripts.fasta -y strawberry.proteins.fasta
 
 
+#instead lets just filter the gff and not remap the proteins
+awk '$3=="mRNA" {print $9}' AddCDS.strawberry_assembled.gff3 |sed 's/ID=//g' |sed 's/Parent=//g' |sed 's/;/\t/g' |cut -f 1,2 |grep -f <(grep ">" strawberry.proteins.fasta |sed 's/>//g'|awk '{print $1}') - >MikadoGrepStrawberry.list
+
+mikado util grep MikadoGrepStrawberry.list AddCDS.strawberry_assembled.gff3 RefinedAddCDS.strawberry_assembled.gff3
+
+#checked to make sure counts for list and gff3 match, they do
+```
+
+
 #get proteins from stringtie transcripts
+```
+
 gt gtf_to_gff3 ../FinalGenomePilonReducedSoftMaskedRecode.gtf >../FinalGenomePilonReducedSoftMaskedRecode.gff3
 
 gt gff3 -tidy -sortlines -fixregionboundaries ../FinalGenomePilonReducedSoftMaskedRecode.gff3 >TidiedFinalGenomePilonReducedSoftMaskedRecode.gff3
@@ -942,15 +963,262 @@ gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../FinalGenomePil
 
 gffread AddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x Stringtie.transcripts.fasta -y Stringtie.proteins.fasta
 
+#instead lets just filter the gff and not remap the proteins
+awk '$3=="mRNA" {print $9}' AddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3 |sed 's/ID=//g' |sed 's/Parent=//g' |sed 's/;/\t/g' |cut -f 1,2 |grep -f <(grep ">" Stringtie.proteins.fasta |sed 's/>//g'|awk '{print $1}') - >MikadoGrepStringtie.list
+
+mikado util grep MikadoGrepStringtie.list AddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3 RefinedAddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3
+
+#checked to make sure counts for list and gff3 match, they do
+
+```
 
 #Cervus hippelaphus Transcripts
- gffread CervusTranscriptsMappedGmap.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x CervusHipTranscripts.fasta -y CervusHipProteins.fasta
+```
+gt gff3 -tidy -sortlines -fixregionboundaries <(sort -k1,1V -k4,5nr CervusTranscriptsMappedGmap.gff3 |grep -v "#") >TidiedCervusTranscriptsMappedGmap.gff3
+gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../FinalGenomePilonReducedSoftMaskedRecode.fa TidiedCervusTranscriptsMappedGmap.gff3 >AddCDSTidiedCervusTranscriptsMappedGmap.gff3
 
-#braker
+gffread AddCDSTidiedCervusTranscriptsMappedGmap.gff3 -VHEJ -g ../FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x CervusHipTranscripts.fasta -y CervusHipProteins.fasta
 
-#Trinity
+#instead lets just filter the gff and not remap the proteins
+awk '$3=="mRNA" {print $9}' AddCDSTidiedCervusTranscriptsMappedGmap.gff3 |sed 's/ID=//g' |sed 's/Parent=//g' |sed 's/;/\t/g' |cut -f 1,2 |grep -f <(grep ">" CervusHipProteins.fasta |sed 's/>//g'|awk '{print $1}') - >MikadoGrepCervus.list
+
+mikado util grep MikadoGrepCervus.list AddCDSTidiedCervusTranscriptsMappedGmap.gff3 RefinedCervusTranscriptsMappedGmap.gff3 &
+
+#checked to make sure counts for list and gff3 match, they do
+
+```
+#### braker
+```
+#all of these passed through cufflinks gffread vhej and retained all proteins.  No need to filter.
+```
+#### Trinity
+```
+#done on ceres
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/21_Trinity/trinity_out_dir
+
+ml cufflinks
+gt gff3 -tidy -sortlines -fixregionboundaries FinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 >TidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3
+gt cds -startcodon -finalstopcodon -v -matchdescstart -seqfile ../../24_mikado/FinalGenomePilonReducedSoftMaskedRecode.fa TidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 >AddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3
+
+#transferred to condo to finish
+
+gffread AddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 -VHEJ -g FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x TrinityVHEJ.transcripts.fasta -y TrinityVHEJ.proteins.fasta
+#few errors that placed transcripts at the ends of scaffolds, and had a few bp added at the end.  These transcripts were left behind.  Many of the transcripts from trinity had overlapping exons, which were merged by cufflinks gffread.
+
+
+#instead lets just filter the gff and not remap the proteins, modified this because grep would not work on the database of 1.6 million transcripts from trinity
+
+awk '$3=="mRNA" {print $9}' AddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 |sed 's/ID=//g' |sed 's/Parent=//g' |sed 's/;/\t/g' |cut -f 1,2 |cat <(grep ">" TrinityVHEJ.proteins.fasta |sed 's/>//g'|awk '{print $1"\t"$1}' |sed 's/mRNA/gene/2') - |sort|uniq -c |awk '$1==2{print $2,$3}' |tr " " "\t"  >MikadoGrepTrinity.list
+
+
+mikado util grep MikadoGrepTrinity.list AddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 RefinedAddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 &
+
+awk '$3=="gene" ||$3=="mRNA" ||$3=="exon" ||$3=="CDS"'  AddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3  >test.gff
+sed -i 's/Name=.*//g' test.gff
+
+mikado util grep MikadoGrepTrinity.list test.gff RefinedAddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3 &
+
+#checked to make sure counts for list and gff3 match, they do
+
+```
+
+
+### Run Mikado
+```
+#/ptmp/GIF/remkv6/Olsen/Elk/01_mikado/01_FindMetStarts
 
 
 
+# create the list.txt
+###############################################################################
+Fixedaugustus.hints.gff3        au      True    1
+RefinedCervusTranscriptsMappedGmap.gff3 CE      False
+RefinedAddCDS.strawberry_assembled.gff  ST      True
+RefinedFixedClass2WithCDS.gff3  CL      True
+RefinedAddCDS.FinalGenomePilonReducedSoftMaskedRecode.gff3      SR      True
+RefinedAddCDSTidiedFinalGenomePilonReducedSoftMaskedRecode.Trinity-GGGene.gff3  TR      True
 
-for f in *rotein.fasta; do echo "mkdir "$f"dir; cd "$f"dir; ln -s ../../FinalGenomePilonReducedSoftMaskedRecode.fa; ln -s ../"$f" ; ml miniconda3; source activate Genomethreader;gth -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein "$f" -gff3out -species nematode -skipalignmentout -o "${f%.*}"aln -force";done  >gth.sh
+###############################################################################
+
+mikado_0.sub
+###############################################################################
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=16
+#SBATCH -p short_1node
+#SBATCH -t 96:00:00
+#SBATCH -J mikado_0
+#SBATCH -o mikado_0.o%j
+#SBATCH -e mikado_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+
+
+cd /ptmp/GIF/remkv6/Olsen/Elk/01_mikado/01_FindMetStarts
+
+ml miniconda3/4.3.30-qdauveb
+conda init bash
+source activate mikado
+
+#!/bin/bash
+#setup variables
+genome="FinalGenomePilonReducedSoftMaskedRecode.fa"
+list="list.txt"
+#run splice junction prediction
+junctions="portcullis_all.junctions.bed"
+#configure
+mikado configure \
+   --list $list \
+   --reference $genome \
+   --mode permissive \
+   --scoring mammalian.yaml \
+   --junctions $junctions \
+     configuration.yaml
+#prepare
+mikado prepare \
+   --json-conf configuration.yaml
+#blast db
+#makeblastdb \
+#   -in uniprot-cervus.fasta \
+#   -dbtype prot \
+#   -parse_seqids
+#blast
+blastx \
+  -max_target_seqs 5 \
+   -num_threads 16 \
+   -query mikado_prepared.fasta \
+   -outfmt 5 \
+   -db uniprot-cervus.fasta \
+   -evalue 0.000001 2> blast.log | sed '/^$/d' > mikado.blast.xml
+blastxml=mikado.blast.xml
+#transdecoder
+TransDecoder.LongOrfs \
+   -t mikado_prepared.fasta
+TransDecoder.Predict \
+   -t mikado_prepared.fasta \
+   --cpu 16
+orfs=$(find $(pwd) -name "mikado_prepared.fasta.transdecoder.bed")
+#serialise
+mikado serialise \
+   --start-method spawn \
+   --procs 16 \
+   --blast_targets uniprot-cervus.fasta \
+   --json-conf configuration.yaml \
+   --xml ${blastxml} \
+   --orfs ${orfs}
+#pick
+mikado pick \
+   --start-method spawn \
+   --procs 16 \
+   --json-conf configuration.yaml \
+   --subloci_out mikado.subloci.gff3
+```
+
+
+
+### Examine and filter new gene prediction
+```
+#related species is 22846, so definitely repeat and pseudogenes here
+awk '$3=="gene"' mikado.loci.gff3 |wc
+  83111  747999 12431841
+
+#genes that do not overlap with braker by at least 50%, i.e. My guess would be that this is due to mikado working with alignments, and braker working with raw transcriptional data?i.e. the rnaseq alignments themselves would give better results, giving weight to unique reads
+bedtools subtract -f 0.5 -A  -s -a mikado.loci.gff3 -b Fixedaugustus.hints.gff3 |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >NoOverlapWithBrakerMikadoGene.list
+47949   95898 1486829 NoOverlapWithBrakerMikadoGene.list
+
+
+
+#genes that do not overlap a repeat, with 50% of an mrna having to align to a transposon
+bedtools subtract -A -f .5 -s -a mikado.loci.gff3 -b AllAnno.gff |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >NoOverlapWithRepeatsMikadoGene.list
+wc NoOverlapWithRepeatsMikadoGene.list
+  42702   85404 1319854 NoOverlapWithRepeatsMikadoGene.list
+#genes with at least 30% overlap of mrna to an EDTA repeat?? is this the correct way to do this?
+
+bedtools subtract -A -f .3 -s -a mikado.loci.gff3 -b AllAnno.gff |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >30PercOverlapWithRepeatsMikadoGene.list
+80768 30PercOverlapWithRepeatsMikadoGene.list
+
+#Mikado genes that overlap with braker
+bedtools intersect  -a mikado.loci.gff3 -b Fixedaugustus.hints.gff3 |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 |sort|uniq >OverlapWithBrakerMikadoGene.list
+wc -l OverlapWithBrakerMikadoGene.list
+57570 OverlapWithBrakerMikadoGene.list
+
+#mikado mRNA that overlap with a repeat
+bedtools intersect  -a mikado.loci.gff3 -b AllAnno.gff |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >OverlapWithRepeatsMikadoGene.list
+wc OverlapWithRepeatsMikadoGene.list
+  59537  119074 1844908 OverlapWithRepeatsMikadoGene.list
+
+grep -w -v -f OverlapWithRepeatsMikadoGene.list OverlapWithBrakerMikadoGene.list >NoRepeatsBrakerOverlapMikadoGene.list &
+
+#Remove genes without expression from mikado.gff
+mikado util grep -v NoExpressionGene.list mikado.loci.gff3 Expressedmikado.loci.gff3
+awk '$3=="gene"' Expressedmikado.loci.gff3|wc
+  69249  623241 10362649
+
+
+#Remove genes that do not produce a meaningful protein via cufflinks gffread -VHEJ
+mikado util grep VHEJGenesWithProperORFGene.list Expressedmikado.loci.gff3 ExpressedIntactORFmikado.loci.gff3
+awk '$3=="gene"'  ExpressedIntactORFmikado.loci.gff3|wc
+  59902  539118 8961850
+
+
+
+#Remove genes that overlap with a repeat
+mikado util grep 30PercOverlapWithRepeatsMikadoGene.list ExpressedIntactORFmikado.loci.gff3 ExpressedIntactORFNoRepeatmikado.loci.gff3
+awk '$3=="gene"' ExpressedIntactORFNoRepeatmikado.loci.gff3|wc
+  50658  455922 7574303
+
+#get rid of genes that do not overlap by 50% to a braker gene, i.e. eliminate alignment artifacts
+ mikado util grep NoOverlapWithBrakerMikadoGene.list ExpressedIntactORFNoRepeatmikado.loci.gff3 ExpressedIntactORFNoRepeatBrakerLikemikado.loci.gff3
+awk '$3=="gene"' ExpressedIntactORFNoRepeatBrakerLikemikado.loci.gff3|wc
+  25377  228393 3808711
+
+```
+### Find genes with bad ORF or position issues
+```
+#number of genes toal
+awk '$3=="gene"' mikado.loci.gff3 |wc
+  83111  747999 12431841
+
+#Convert to protein and transcript to find issues  
+gffread mikado.loci.gff3 -VHEJ -g FinalGenomePilonReducedSoftMaskedRecode.fa -t mRNA -x mikado.loci_VHEJ_transcripts.fasta -y mikado.loci_VHEJ_proteins.fasta
+
+# only 77k made a proper stop and start codon.  
+grep -c ">" mikado.loci_VHEJ_proteins.fasta
+77526
+
+ less mikado.loci_VHEJ_transcripts.fasta |grep ">" |sed 's/>//g' |sed 's/gene=//g' |tr " " "\t" >VHEJGenesWithProperORFGene.list
+
+```
+
+
+
+### Setup expression of new mikado.gff
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/29_Expression
+#transferred to ceres and ran mikado.loci.gff3 there
+#None of the scripts were changed, note this considers multimapping reads.  Old mikado.loci.gff3 *summary and *genes.txt were renamed with the InitialRound extension
+
+for f in *genes.txt ; do echo "awk '{print \$1,\$7}' "$f" >"${f%.*}"_exp.tab";done >tab3exp.sh
+sh tab3exp.sh
+
+awk '{arr[$1]=arr[$1] ";" $2}END{for(i in arr)print i,arr[i]}' *exp.tab |sed 's/;/\t/g' >mikado.loci.Expression.tab
+
+#Transferring back to nova
+
+#How many have at least 1 multimapping rnaseq read
+less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>0' |wc
+  69170  899210 3199047
+[remkv6@nova023 05_EvaluatePrediction]$ less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>1' |wc
+  66256  861328 3084250
+[remkv6@nova023 05_EvaluatePrediction]$ less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>2' |wc
+  64416  837408 3011781
+[remkv6@nova023 05_EvaluatePrediction]$ less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>3' |wc
+  63091  820183 2959570
+
+#went with zero reads, conservative
+less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)==0{print $1".1\t"$1}' >NoExpressionGene.list
+
+```
