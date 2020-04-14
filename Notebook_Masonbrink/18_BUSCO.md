@@ -130,3 +130,72 @@ INFO:   [hmmsearch]     255 of 255 task(s) completed
 INFO:   Results:        C:91.8%[S:80.0%,D:11.8%],F:6.3%,M:1.9%,n:255
 
 ```
+
+### BUSCO4 on Red Deer proteins
+```
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4
+
+# transferrred from ceres
+GCA_002197005.1_CerEla1.0_protein.faa
+cp buscoprot_0.sub  RedDeerbuscoprot_0.sub
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i GCA_002197005.1_CerEla1.0_protein.faa --auto-lineage-euk -o RedDeerProtBUSCO4 -m prot -c 15 -f --augustus_species CervusCanadensis3
+
+
+```
+### Busco4 on cattle proteins
+```
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4
+wget ftp://ftp.ensembl.org/pub/release-99/fasta/bos_taurus/pep/Bos_taurus.ARS-UCD1.2.pep.all.fa.gz
+gunzip Bos_taurus.ARS-UCD1.2.pep.all.fa.gz
+cp buscoprot_0.sub  Cowbuscoprot_0.sub
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i Bos_taurus.ARS-UCD1.2.pep.all.fa --auto-lineage-euk -o Bos_taurus.ProtBUSCO4 -m prot -c 15 -f --augustus_species CervusCanadensis3
+```
+
+### BUSCO4 on mikado/braker merged elk proteins
+```
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4
+
+#copied from nova
+gffmergeElkGenesVHEJ_proteins.fasta
+
+cp buscoprot_0.sub  gffmergeElkbuscoprot_0.sub
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i gffmergeElkGenesVHEJ_proteins.fasta --auto-lineage-euk -o mikadobrakermergeProtBUSCO4 -m prot -c 15 -f --augustus_species CervusCanadensis3
+```
+
+### BUSCO4 on mikado/braker proteins reduced by bos/red deer gffs
+```
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4
+
+#copied from nova
+Bos_ReddeerReductionVHEJ_proteins.fasta
+
+cp buscoprot_0.sub Bos_ReddeerReductionbuscoprot_0.sub
+
+```
+
+### Investigate BUSCO proteins by aligning proteins to genome
+```
+
+#Eukaryota dataset
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/01_AlignBuscoProteinsEuk
+grep -c ">" /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downloads/lineages/eukaryota_odb10/ancestral
+255
+ln -s /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downloads/lineages/eukaryota_odb10/ancestral
+ln -s ../../FinalGenomePilonReducedSoftMaskedRecode.fa
+
+echo "ml miniconda3; source activate Genomethreader;gth -first 1 -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein ancestral -skipalignmentout -gff3out -o EukAncestralBusco.gff3 -force" >gth.sh
+
+
+#cetartiodactyla dataset
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/02_AlignBuscoProteinsCer
+grep -c ">" /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downloads/lineages/cetartiodactyla_odb10/ancestral
+13335
+ln -s /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downloads/lineages/cetartiodactyla_odb10/ancestral
+ln -s ../../FinalGenomePilonReducedSoftMaskedRecode.fa
+
+ml miniconda3; source activate Genomethreader;gth -first 1 -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein ancestral -skipalignmentout -gff3out -o CetAncestralBusco.gff3 -force
+
+```
