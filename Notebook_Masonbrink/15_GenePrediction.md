@@ -1130,14 +1130,13 @@ bedtools subtract -f 0.5 -A  -s -a mikado.loci.gff3 -b Fixedaugustus.hints.gff3 
 47949   95898 1486829 NoOverlapWithBrakerMikadoGene.list
 
 
-
 #genes that do not overlap a repeat, with 50% of an mrna having to align to a transposon
 bedtools subtract -A -f .5 -s -a mikado.loci.gff3 -b AllAnno.gff |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >NoOverlapWithRepeatsMikadoGene.list
 wc NoOverlapWithRepeatsMikadoGene.list
   42702   85404 1319854 NoOverlapWithRepeatsMikadoGene.list
-#genes with at least 30% overlap of mrna to an EDTA repeat?? is this the correct way to do this?
 
-bedtools subtract -A -f .3 -s -a mikado.loci.gff3 -b AllAnno.gff |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >30PercOverlapWithRepeatsMikadoGene.list
+#genes with at least 30% overlap of mrna to an EDTA repeat?? is this the correct way to do this?
+bedtools subtract -A -f .3  -a mikado.loci.gff3 -b AllAnno.gff |awk '$3=="mRNA"' |cut -f 9 |sed 's/;/\t/g' |sed 's/ID=//g' |sed 's/Parent=//g' |cut -f 1,2 >30PercOverlapWithRepeatsMikadoGene.list
 80768 30PercOverlapWithRepeatsMikadoGene.list
 
 #Mikado genes that overlap with braker
@@ -1201,24 +1200,30 @@ grep -c ">" mikado.loci_VHEJ_proteins.fasta
 #transferred to ceres and ran mikado.loci.gff3 there
 #None of the scripts were changed, note this considers multimapping reads.  Old mikado.loci.gff3 *summary and *genes.txt were renamed with the InitialRound extension
 
-for f in *genes.txt ; do echo "awk '{print \$1,\$7}' "$f" >"${f%.*}"_exp.tab";done >tab3exp.sh
-sh tab3exp.sh
+for f in *mRNA.txt ; do echo "awk '{print \$1,\$7}' "$f" >"${f%.*}"_exp.tab";done >tab3exp2.sh
+sh tab3exp2.sh
 
-awk '{arr[$1]=arr[$1] ";" $2}END{for(i in arr)print i,arr[i]}' *exp.tab |sed 's/;/\t/g' >mikado.loci.Expression.tab
+awk '{arr[$1]=arr[$1] ";" $2}END{for(i in arr)print i,arr[i]}' *exp.tab |sed 's/;/\t/g' >Bos_ReddeerReduction.Expression.tab
 
 #Transferring back to nova
 
-#How many have at least 1 multimapping rnaseq read
-less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>0' |wc
-  69170  899210 3199047
-[remkv6@nova023 05_EvaluatePrediction]$ less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>1' |wc
-  66256  861328 3084250
-[remkv6@nova023 05_EvaluatePrediction]$ less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>2' |wc
-  64416  837408 3011781
-[remkv6@nova023 05_EvaluatePrediction]$ less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>3' |wc
-  63091  820183 2959570
+#How many have at least 1 unique rnaseq read
+less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>0' |wc
+ 72602  943826 3239284
+less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>1' |wc
+ 67502  877526 3042294
+less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>2' |wc
+ 64239  835107 2914984
+less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)>3' |wc
+ 61760  802880 2817727
+
 
 #went with zero reads, conservative
-less mikado.loci.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)==0{print $1".1\t"$1}' >NoExpressionGene.list
+less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)==0{print $1".1\t"$1}' >Bos_ReddeerReductionNoExpressionGene.list
+
+```
+### Andrew's approach
+```
+
 
 ```

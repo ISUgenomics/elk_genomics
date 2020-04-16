@@ -186,7 +186,7 @@ grep -c ">" /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downl
 ln -s /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downloads/lineages/eukaryota_odb10/ancestral
 ln -s ../../FinalGenomePilonReducedSoftMaskedRecode.fa
 
-echo "ml miniconda3; source activate Genomethreader;gth -first 1 -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein ancestral -skipalignmentout -gff3out -o EukAncestralBusco.gff3 -force" >gth.sh
+echo "ml miniconda3; source activate Genomethreader;gth  -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein ancestral -skipalignmentout -gff3out -o EukAncestralBusco.gff3 -force" >gth.sh
 
 
 #cetartiodactyla dataset
@@ -196,6 +196,39 @@ grep -c ">" /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downl
 ln -s /work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4/busco_downloads/lineages/cetartiodactyla_odb10/ancestral
 ln -s ../../FinalGenomePilonReducedSoftMaskedRecode.fa
 
-ml miniconda3; source activate Genomethreader;gth -first 1 -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein ancestral -skipalignmentout -gff3out -o CetAncestralBusco.gff3 -force
+ml miniconda3; source activate Genomethreader;gth  -genomic FinalGenomePilonReducedSoftMaskedRecode.fa -protein ancestral -skipalignmentout -gff3out -o CetAncestralBusco.gff3 -force
+
+```
+### Run Busco on High Confidence genes
+```
+#/work/GIF/remkv6/Elk/31_busco/02_Busco4/01_ProteinBusco4
+
+
+ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i ProperCodingHighConfidenceBos_ReddeerReductionVHEJ_proteins.fasta --auto-lineage-euk -o ProperCodingHighConfidenceBos_ReddeerReductionVHEJ_proteinProtBUSCO4 -m prot -c 15 -f --augustus_species CervusCanadensis3
+
+
+--------------------------------------------------
+|Results from generic domain eukaryota_odb10      |
+--------------------------------------------------
+|C:97.7%[S:41.2%,D:56.5%],F:1.2%,M:1.1%,n:255     |
+|249    Complete BUSCOs (C)                       |
+|105    Complete and single-copy BUSCOs (S)       |
+|144    Complete and duplicated BUSCOs (D)        |
+|3      Fragmented BUSCOs (F)                     |
+|3      Missing BUSCOs (M)                        |
+|255    Total BUSCO groups searched               |
+--------------------------------------------------
+
+--------------------------------------------------
+|Results from dataset cetartiodactyla_odb10       |
+--------------------------------------------------
+|C:92.1%[S:40.2%,D:51.9%],F:1.7%,M:6.2%,n:13335   |
+|12285  Complete BUSCOs (C)                       |
+|5367   Complete and single-copy BUSCOs (S)       |
+|6918   Complete and duplicated BUSCOs (D)        |
+|227    Fragmented BUSCOs (F)                     |
+|823    Missing BUSCOs (M)                        |
+|13335  Total BUSCO groups searched               |
+--------------------------------------------------
 
 ```

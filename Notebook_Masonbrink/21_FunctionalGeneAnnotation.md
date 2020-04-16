@@ -5,12 +5,13 @@
 ```
 /work/GIF/remkv6/Elk/25_Interpro
 #version 5.27-66.0
- ln -s ../24_mikado/01_mikado2/FinalGenePrediction.proteins.fasta
 
+
+fasta-splitter.pl --n-parts 99 ../Bos_ReddeerReductionVHEJ_proteins.fasta
 #remove the characters from the sequences that interproscan flags and stumbles upon
 for f in *fasta; do sed -i -e '/^[^>]/s/[^GPAVLIMCFYWHKRQNEDST]//g' $f;done
 
- fasta-splitter.pl --n-parts 16 FinalGenePrediction.proteinsFixed.fasta
+
 
 for f in *part*; do mkdir $f.TEMP; done
 for f in *part*.fasta; do echo "module use /work/GIF/software/modules;ml GIF/interproscan/5.27-66.0; interproscan.sh -cpu 16 -f TSV,GFF3 -goterms -i "$f" -pa -T "$f".TEMP";done >interproscan.sh
@@ -21,8 +22,9 @@ for f in *part*.fasta; do echo "module use /work/GIF/software/modules;ml GIF/int
 ```
 #/work/GIF/remkv6/Elk/26_Prots2Nr
 #downloaded December 8 2019
-ln -s ../24_mikado/01_mikado2/FinalGenePrediction.proteins.fasta
-fasta-splitter.pl --n-parts 16 FinalGenePrediction.proteins.fasta
+
+fasta-splitter.pl --n-parts 99 ../Bos_ReddeerReductionVHEJ_proteins.fasta
+for f in *fasta; do sed -i -e '/^[^>]/s/[^GPAVLIMCFYWHKRQNEDST]//g' $f;done
 for f in *part*; do echo "sh runBlastP2NR.sh "$f;done >blast.sh
 
 #runBlastP2NR.sh
@@ -50,9 +52,8 @@ blastp \
 #/work/GIF/remkv6/Elk/27_ProtsUniprot
 #Downloaded December 9 2019
 
-ln -s ../24_mikado/01_mikado2/FinalGenePrediction.proteins.fasta
-
-fasta-splitter.pl --n-parts 16 FinalGenePrediction.proteins.fasta
+fasta-splitter.pl --n-parts 99 ../Bos_ReddeerReductionVHEJ_proteins.fasta
+for f in *fasta; do sed -i -e '/^[^>]/s/[^GPAVLIMCFYWHKRQNEDST]//g' $f;done
 
 for f in *part*; do echo "sh runBlastP2uniprot_swissprot.sh "$f;done >blast.sh
 
@@ -82,9 +83,8 @@ blastp \
 #Downloaded 10-23-19
 #/work/GIF/remkv6/Elk/28_Transcrips2Nt
 ln -s ~/common_scripts/runBlastN2NT.sh
-ln -s ../24_mikado/01_mikado2/FinalGenePrediction.transcripts.fasta
-fasta-splitter.pl --n-parts 16 FinalGenePrediction.transcripts.fasta
 
+ fasta-splitter.pl --n-parts 99 ../Bos_ReddeerReductionVHEJ_transcripts.fasta
 
 for f in *part*; do echo "sh runBlastP2uniprot_swissprot.sh "$f;done >blast.sh
 
