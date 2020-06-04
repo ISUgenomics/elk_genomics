@@ -185,12 +185,17 @@ cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)
 wc Interpro.tab
   5525  16809 429072 Interpro.tab
 
-  cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") && NF==10) {print $1"\t"$9} else if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") && NF==11) {print $1"\t"$9"_"$11} else if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") &&  NF==12) {print $1"\t"$8"_"$10"_"$12} else {next}}' >PantherSmartSuperfamily.tab
-  cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="CDD" && NF==11) {print $1"\t"$9"_"$10} else if($2=="CDD" && NF==12) {print $1"\t"$9"_"$10"_"$13} if ($2=="CDD" && NF==13) {print $1"\t"$8"_"$10"_"$11"_"$13} else {next}}' >CDD.tab
-  cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PIRSF" ||$2=="Gene3D" )&& NF==10) {print $1"\t"$9} else if (($2=="PIRSF"||$2=="Gene3D" ) && NF==11) {print $1"\t"$9"_"$11} else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==12) {print $1"\t"$10}else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==13) {print $1"\t"$9"_"$11} else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==14) {print $1"\t"$9"_"$11} else {next}}' > Gene3dPirsf.tab
-  cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="SFLD" || $2=="MobiDBLite") {print $1"\t"$10"_"$9} else if($2=="Coils") {print $1"\t"$9} else {next}}' >CoilsSfldMobidblite.tab
-  cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="Pfam" &&NF==11) {print $1"\t"$9"_"$10} else if($2=="Pfam" &&NF==12) {print $1"\t"$9"_"$10"_"$12} else if($2=="Pfam" && NF==13) {print $1"\t"$8"_"$10"_"$12} else {next}}' >Pfam.tab
-  cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap")&& NF==11 ) {print $1,$9"_"$10} else if (($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap" )&& NF==12 ) {print $1,$9"_"$10"_"$12} else if (($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap")&& NF==13 ) {print $1,$8"_"$10"_"$11"_"$13} else {next}}' >PrintsProdomPrositepatternsPrositeprofilesTigrfamHamap.tab
+
+    cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") && NF==10) {print $1"\t"$9} else if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") && NF==11) {print $1"\t"$9","$11} else if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") &&  NF==12) {print $1"\t"$8","$10","$12} else {next}}' >PantherSmartSuperfamily.tab
+
+    cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="CDD" && NF==11) {print $1"\t"$9","$10} else if($2=="CDD" && NF==12) {print $1"\t"$9","$10","$13} if ($2=="CDD" && NF==13) {print $1"\t"$8","$10","$11","$13} else {next}}' >CDD.tab
+
+    cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PIRSF" ||$2=="Gene3D" )&& NF==10) {print $1"\t"$9} else if (($2=="PIRSF"||$2=="Gene3D" ) && NF==11) {print $1"\t"$9","$11} else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==12) {print $1"\t"$10}else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==13) {print $1"\t"$9","$11} else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==14) {print $1"\t"$9","$11} else {next}}' > Gene3dPirsf.tab
+
+    cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="SFLD" || $2=="MobiDBLite") {print $1"\t"$10","$9} else if($2=="Coils") {print $1"\t"$9} else {next}}' >CoilsSfldMobidblite.tab
+    cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="Pfam" &&NF==11) {print $1"\t"$9","$10} else if($2=="Pfam" &&NF==12) {print $1"\t"$9","$10","$12} else if($2=="Pfam" && NF==13) {print $1"\t"$8","$10","$12} else {next}}' >Pfam.tab
+
+    cat *fasta.gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap")&& NF==11 ) {print $1"\t"$9","$10} else if (($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap" )&& NF==12 ) {print $1"\t"$9","$10","$12} else if (($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap")&& NF==13 ) {print $1"\t"$8","$10","$11","$13} else {next}}' >PrintsProdomPrositepatternsPrositeprofilesTigrfamHamap.tab
 
   cat *tab |sort|uniq >Interpro.tab1
 
@@ -198,34 +203,40 @@ wc Interpro.tab
 wc Interpro.tab1
 5334  16905 440155 Interpro.tab1
 
-  
+
 
 ```
-### Combine all annotationsxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+### Combine all annotations
 ```
-#Fix the oddball annotation of transcript in $3
- awk -F"\t" '{if($3=="transcript"){print $1"\t"$2"\tmRNA\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9} else {print $0}}' OrderedSCNGenePredictions.gff3 >OddTranscriptFixOrderedSCNGenePredictions.gff3
+#/work/GIF/remkv6/Elk/32_CombineFunctionalAnnotations
 
+#get interproscan tab file into the righ format
+cp ../25_Interpro/Interpro.tab1 .
+sed -i 's/Name=//g' Interpro.tab1
 
-#get all the blasts together
-awk -F"\t" '{arr[$1]=arr[$1] "\t" $0}END{for(i in arr)print i,arr[i]}' *tab |cut -f 1,3,5,7,9,11  |sed 's/\t/#/1'|sed 's/\t/|/g' |sed 's/=//g'|sed 's/#/\tNote=/1' >CombineAnnot.tab1
+cat *tab |sort|uniq|awk -F"\t" '{arr[$1]=arr[$1] "," $2}END{for(i in arr)print i,arr[i]}'   |sed 's/,/\t/1' >Blasts.tab
 
-#add in the interpro annotations
-awk '{arr[$1]=arr[$1] "\t" $0}END{for(i in arr)print i,arr[i]}' *tab1 |sed 's/ ;/\t/1' |cut -f 2,3,5 |sed 's/\t/;/2' >CombeinAnnotIPRs.tab2
+cat Blasts.tab Interpro.tab1 |awk -F"\t" '{arr[$1]=arr[$1] "," $2}END{for(i in arr)print i,arr[i]}' |sed 's/ ,$//g' |sed 's/  / /g' |sed 's/ /\t/1' |sed 's/\t,/\t/g' >ImperfectListAnnotations.tab
 
+#get all the mRNAs, even those without annotations
+awk '$3=="mRNA" ||$3=="transcript"' Bos_ReddeerReductionVHEJ.gff |sed 's/geneID=.*locus=/locus=/g' |sed 's/Parent=.*locus=/locus=/g'|sed 's/;/\t/g' |sed 's/ID=//g' |cut -f 9 |cat ImperfectListAnnotations.tab - |sort -k1,1 -u >AllGenesAddedAllAnnotations.tab
 
-less ../07_NewGenes/OddTranscriptFixOrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |sed 's/ID=/ID=\t/g' |sed 's/;/\t;/1' >OddTranscriptFixOrderedSCNGenePredictionsgff3.GREPMOD
+paste <(awk '$3=="mRNA" ||$3=="transcript"' Bos_ReddeerReductionVHEJ.gff |sed 's/ID=/ID=\t/1' |sed 's/;/\t;/1' |tr " " "\t" |sort -k10,10 |sed 's/geneID=.*locus=/Parent=/g' )  <(sort -k1,1 AllGenesAddedAllAnnotations.tab) |awk -F"\t"  '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9$10$11";Note="$13}' >AnnotatedmRNAs.gff3
 
-#find the mrnas lacking annotations
-awk '{print $1}' CombeinAnnotIPRs.tab2 |cat - <(cut -f 10 OddTranscriptFixOrderedSCNGenePredictionsgff3.GREPMOD) |sort|uniq -c |awk '$1==1 {print $2}' |cat - CombeinAnnotIPRs.tab2 >AllGenesWWOannot.tab3
-
-#get the mrnas in the gff in the proper order and paste
-paste <(sort -k10,10 OddTranscriptFixOrderedSCNGenePredictionsgff3.GREPMOD|sed 's/;Name=.*//g') <(sort -k1,1 AllGenesWWOannot.tab3) |awk -F"\t" '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9$10$11";"$13}' >AllGenesAnnotated.gff
-
-
-#combine with exons,genes, utrs, cds, etc annotations
-awk '$3!="mRNA"' ../07_NewGenes/OddTranscriptFixOrderedSCNGenePredictions.gff3 |sed 's/Name=.*//g'|grep -v "#" |cat - AllGenesAnnotated.gff >AllTypesWWOAnnotationsDisorganized.gff
+cat <(awk '$3!="mRNA" && $3!="transcript"' Bos_ReddeerReductionVHEJ.gff) AnnotatedmRNAs.gff3 |sort -k1,1V -k4,5nr >AnnotatedGeneModels.gff
 
 #get the proper order for the gff, so it will show up in jbrowse
- perl gff3sort/gff3sort.pl --precise --chr_order natural AllTypesWWOAnnotationsDisorganized.gff > SCNgenomeFunctionalGeneAnnotations.gff3
+ perl gff3sort/gff3sort.pl --precise --chr_order natural AnnotatedGeneModels.gff > OrderedAnnotatedGeneModels.gff3
+
+#How many were annotated?
+less OrderedAnnotatedGeneModels_sorted.gff |awk '$3=="mRNA"' |sed 's/Note=./\t/' |awk -F"\t" '{print NF}' |sort|uniq -c| less
+
+ 74948 10 -- extra field so, annotated
+ 52653 9 -- not annotated
+
+#How many of the high confidence genes were annotated?
+
+#How many of the low confidence genes were annotated?
+
+
 ```
