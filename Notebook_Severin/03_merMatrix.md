@@ -110,7 +110,7 @@ dev.off()
 ```
 ![](03_merMatrix/kmerplot_pc1-pc2GTR40000.png)
 
-Now we can clearly see the very large scaffolds in the main cluster in the center and two strong clusters near the bottom and perhaps top left right that should be futher investigated as contamination. It is possible the two clusters at the bottom are mitochondrial genome or multiple copies of the mitochondrial genome.
+Now we can clearly see the very large scaffolds in the main cluster in the center and two strong clusters near the bottom and perhaps top left right that should be further investigated as contamination. It is possible the two clusters at the bottom are mitochondrial genome or multiple copies of the mitochondrial genome.
 
 ```
 > elkpcaDF[559,1:2]
