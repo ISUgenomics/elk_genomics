@@ -291,6 +291,13 @@ gffread -F -O -E LOWConfidencetest.gff3 -o GTLOWConfidencetest.gff3
 perl gff3sort/gff3sort.pl --precise --chr_order natural GTLOWConfidencetest.gff3 > OrderedGTLOWConfidencetest.gff3
 sh ~/common_scripts/runTabix.sh OrderedGTLOWConfidencetest.gff3
 
+
+#gene that could possibly be added to high confidence, due to large numbers of annotations from multiple sources. Though most of these may already be represented by another better assembled transcript...
+less GTLOWConfidencetest.gff3 |awk '$3=="mRNA"' |grep -v -i -e "integrase" -e "transposon" -e "helitron" -e "maverick" |grep -v -e "LINE" -e "SINE" |grep -v -i -e "hypothetical" -e "transposable" |awk -F";" 'NF>4' |grep -v "null)" |grep -v "BAC" >LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+
+wc LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+   3228   84232 1073751 LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+
 ```
 
 
