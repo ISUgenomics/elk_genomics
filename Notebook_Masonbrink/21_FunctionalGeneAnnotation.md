@@ -226,17 +226,117 @@ paste <(awk '$3=="mRNA" ||$3=="transcript"' Bos_ReddeerReductionVHEJ.gff |sed 's
 cat <(awk '$3!="mRNA" && $3!="transcript"' Bos_ReddeerReductionVHEJ.gff) AnnotatedmRNAs.gff3 |sort -k1,1V -k4,5nr >AnnotatedGeneModels.gff
 
 #get the proper order for the gff, so it will show up in jbrowse
- perl gff3sort/gff3sort.pl --precise --chr_order natural AnnotatedGeneModels.gff > OrderedAnnotatedGeneModels.gff3
+sed 's/=/#/g' OrderedAnnotatedGeneModels.gffReorder.gff |sed 's/ID#/ID=/g' |sed 's/Parent#/Parent=/g' |sed 's/transcripts#/transcripts=/g' |sed 's/geneid#/geneid=/g' |sed 's/Note#/Note=/g' |sed 's/genes#/genes=/g' >EqualsFixed.gff
+
+ perl gff3sort/gff3sort.pl --precise --chr_order natural EqualisFixed.gff > OrderedAnnotatedGeneModels.gff3
 
 #How many were annotated?
-less OrderedAnnotatedGeneModels_sorted.gff |awk '$3=="mRNA"' |sed 's/Note=./\t/' |awk -F"\t" '{print NF}' |sort|uniq -c| less
+less OrderedAnnotatedGeneModels.gff3 |awk '$3=="mRNA"' |sed 's/Note=./\t/' |awk -F"\t" '{print NF}' |sort|uniq -c| less
 
- 74948 10 -- extra field so, annotated
- 52653 9 -- not annotated
+110262 10 Annotated
+ 17339 9 Not annotated
 
-#How many of the high confidence genes were annotated?
 
-#How many of the low confidence genes were annotated?
+#reorder and confirm the ontology of the gff for mikado util grep
+sed -i 's/\tgeme\t/\tgene\t/g'  OrderedAnnotatedGeneModels.gff3
+gffread -F -O -E OrderedAnnotatedGeneModels.gff3 -o OrderedAnnotatedGeneModels.gffReorder.gff
 
+#just get teh high confidence genes
+mikado util grep ../02_mergeMikadoBraker/HighConfidence4MikadoGrep.list OrderedAnnotatedGeneModels.gffReorder.gff   HighConfidenceOrderedAnnotatedGeneModels.gff3
+#get rid of genes annotated as TE's
+mikado util grep -v AllUniqueTransposonGenesmRNAs.list  HighConfidenceOrderedAnnotatedGeneModels.gff3 NOTEHighConfidenceOrderedAnnotatedGeneModels.gff3
+
+perl gff3sort/gff3sort.pl --precise --chr_order natural GTReOrderedAnnotatedGeneModels.gffReorder.gff > OrderedGTReOrderedAnnota
+tedGeneModels.gffReorder.gff
+gffread -F -O -E GTReOrderedAnnotatedGeneModels.gffReorder.gff -o FixedGTReOrderedAnnotatedGeneModels.gffReorder.gff
+mikado util grep ../02_mergeMikadoBraker/HighConfidence4MikadoGrep.list FixedGTReOrderedAnnotatedGeneModels.gffReorder.gff >HighConfidencetest.gff3
+gffread -F -O -E HighConfidencetest.gff3 -o GTHighConfidencetest.gff3
+perl gff3sort/gff3sort.pl --precise --chr_order natural GTHighConfidencetest.gff3 > OrderedGTHighConfidencetest.gff3
+sh ~/common_scripts/runTabix.sh OrderedGTHighConfidencetest.gff3
+#WORKS! now remove TEs from high confidence
+mikado util grep  -v AllUniqueTransposonGenesmRNAs.list HighConfidencetest.gff3 >NOTEHighConfidencetest.gff3
+gffread -F -O -E NOTEHighConfidencetest.gff3 -o GTNOTEHighConfidencetest.gff3
+perl gff3sort/gff3sort.pl --precise --chr_order natural GTNOTEHighConfidencetest.gff3 > OrderedGTNOTEHighConfidencetest.gff3
+sh ~/common_scripts/runTabix.sh OrderedGTNOTEHighConfidencetest.gff3
+#works!, this is the non transposable element, high confidence gene model gff
+
+
+#create for genes that overlap repeats
+RepetitiveMrnasOrderedAnnotatedGeneModels.list
+mikado util grep  RepetitiveMrnasOrderedAnnotatedGeneModels.list FixedGTReOrderedAnnotatedGeneModels.gffReorder.gff >RepetitiveGenes.gff3
+gffread -F -O -E RepetitiveGenes.gff3 -o GTRepetitiveGenes.gff3
+perl gff3sort/gff3sort.pl --precise --chr_order natural GTRepetitiveGenes.gff3 > OrderedGTRepetitiveGenes.gff3
+sh ~/common_scripts/runTabix.sh OrderedGTRepetitiveGenes.gff3
+
+
+#creat the EDTA track
+
+#modify EDTA gff to get to display in jbrowse
+less AllAnno.gff |sed 's/;Method=.*//g' |sed  's/ID=/ID=\t/1' |sed 's/Parent=/ID=\t/1' |awk '{print $1"\t"$2"\tmRNA\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9NR$10";Note="$3}' |sed 's/Parent=/ID=/g' >AllAnnoMod.gff
+gt gff3 -force -tidy -sortlines -o AllAnnoEDTA.gff AllAnnoMod.gff
+sh ~/common_scripts/runTabix.sh AllAnnoEDTA.gff
+
+#create repeatmodeler track
+
+
+
+#All genes and transcripts assembled
+gffread -F -O -E OrderedAnnotatedGeneModels_sorted.gff -o GTOrderedAnnotatedGeneModels_sorted.gff
+perl gff3sort/gff3sort.pl --precise --chr_order natural GTOrderedAnnotatedGeneModels_sorted.gff > OrderedGTOrderedAnnotatedGeneModels_sorted.gff
+sh ~/common_scripts/runTabix.sh OrderedGTOrderedAnnotatedGeneModels_sorted.gff
+
+#Low confidence genes
+mikado util grep  -v ../02_mergeMikadoBraker/HighConfidence4MikadoGrep.list FixedGTReOrderedAnnotatedGeneModels.gffReorder.gff >LOWConfidencetest.gff3
+gffread -F -O -E LOWConfidencetest.gff3 -o GTLOWConfidencetest.gff3
+perl gff3sort/gff3sort.pl --precise --chr_order natural GTLOWConfidencetest.gff3 > OrderedGTLOWConfidencetest.gff3
+sh ~/common_scripts/runTabix.sh OrderedGTLOWConfidencetest.gff3
+
+
+#gene that could possibly be added to high confidence, due to large numbers of annotations from multiple sources. Though most of these may already be represented by another better assembled transcript...
+less GTLOWConfidencetest.gff3 |awk '$3=="mRNA"' |grep -v -i -e "integrase" -e "transposon" -e "helitron" -e "maverick" |grep -v -e "LINE" -e "SINE" |grep -v -i -e "hypothetical" -e "transposable" |awk -F";" 'NF>4' |grep -v "null)" |grep -v "BAC" >LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+
+wc LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+   3228   84232 1073751 LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+
+```
+
+
+
+###  Files in proper format, filter for number
+```
+
+
+
+#Genes lacking Annotations
+less OrderedAnnotatedGeneModels.gff3 | awk '$3=="mRNA"' |sed 's/mobidb-lite,signature_desc#consensus disorder prediction//g' |sed 's/(null)//g' |grep -v  "Note=." |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1,2 |sed 's/Parent=//g' >NoAnnotationGenesmRNAs.list
+wc NoAnnotationGenesmRNAs.list
+17574  35148 452703 NoAnnotationGenesmRNAs.list
+
+
+
+#transposon genes to be removed (determined through annotation)
+less OrderedAnnotatedGeneModels.gff3 |awk '$3=="mRNA"' |sed 's/mobidb-lite,signature_desc#consensus disorder prediction//g' |sed 's/(null)//g' |grep  -e "LINE" -e "SINE" |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1,2 |sed 's/Parent=//g' |sed 's/ID=//g'  >TransposonGenesmRNAs.list
+
+#add in lines and sines with different statement
+less OrderedAnnotatedGeneModels.gff3 |awk '$3=="mRNA"' |sed 's/mobidb-lite,signature_desc#consensus disorder prediction//g' |sed 's/(null)//g' |grep  -e "LINE" -e "SINE" |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1,2 |sed 's/Parent=//g' |sed 's/ID=//g'  >TransposonGenesmRNAs.list
+ less OrderedAnnotatedGeneModels.gff3 |awk '$3=="mRNA"' |sed 's/mobidb-lite,signature_desc#consensus disorder prediction//g' |sed 's/(null)//g' |grep  -i -e "transpos" -e "integrase" -e "helitron" -e "maverick" |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 1,2 |sed 's/Parent=//g' |sed 's/ID=//g' |cat - TransposonGenesmRNAs.list |sort|uniq >AllUniqueTransposonGenesmRNAs.list
+
+ wc AllUniqueTransposonGenesmRNAs.list
+  6735  13470 205784 AllUniqueTransposonGenesmRNAs.list
+
+
+
+
+
+# Repeat GeneFiltering
+
+#/work/gif/remkv6/Olsen/Elk/05_EvaluatePrediction
+
+awk '$3=="mRNA"' OrderedAnnotatedGeneModels.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |sed 's/Parent=//g' |cut -f 1,2 |sed  's/geneRLOC/RLOC/g' >OrderedAnnotatedGeneModels.list
+
+cat <( bedtools intersect   -wo -a OrderedAnnotatedGeneModels.gff3 -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="CDS"' |awk '{print $9}'|sort|uniq -c|awk '$1>1 {print $2}'|sed 's/Parent=//g') <(bedtools intersect -f .2  -wo -a gttest.gff3 -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="mRNA"' |awk '{print $9}'|sort|uniq |sed 's/ID=//g'|sed 's/;/\t/g' |cut -f 1)|sort|uniq |awk '{print $1"\tRepeats"}' |cat OrderedAnnotatedGeneModels.list - |awk -F"\t" '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |awk '$3=="Repeats"' |cut -f 1,2 >RepetitiveMrnasOrderedAnnotatedGeneModels.list
+
+wc RepetitiveMrnasOrderedAnnotatedGeneModels.list
+ 23740  47480 496636 RepetitiveMrnasgttest.list
 
 ```

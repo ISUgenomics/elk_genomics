@@ -241,13 +241,6 @@ mikado util NoExpressionList4MikadoGrep.list Bos_ReddeerReduction.gff NoExpressi
 
 cat <( bedtools intersect   -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="CDS"' |awk '{print $9}'|sort|uniq -c|awk '$1>1 {print $2}'|sed 's/Parent=//g') <(bedtools intersect -f .2  -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="mRNA"' |awk '{print $9}'|sort|uniq |sed 's/ID=//g'|sed 's/;/\t/g' |cut -f 1)|sort|uniq |awk '{print $1"\tRepeats"}' |cat AllmRNAGenesBos_ReddeerReduction.list - |awk -F"\t" '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |awk '$3=="Repeats"' |cut -f 1,2 >RepetitiveMrnasLowConfidenceBos_ReddeerReduction.list
 
-#extracting gene names, correct number?, yes!
-cat <( bedtools intersect   -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="CDS"' |awk '{print $9}'|sort|uniq -c|awk '$1>1 {print $2}'|sed 's/Parent=//g') <(bedtools intersect -f .2  -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="mRNA"' |awk '{print $9}'|sort|uniq |sed 's/ID=//g'|sed 's/;/\t/g' |cut -f 1)|sort|uniq |awk '{print $1"\tRepeats"}' |cat AllmRNAGenesBos_ReddeerReduction.list - |awk -F"\t" '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |awk '$3=="Repeats"' |cut -f 1,2 |wc
-  25009   50018  823935
-
-#total number of mRNA extracted with repeats
-cat <( bedtools intersect   -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="CDS"' |awk '{print $9}'|sort|uniq -c|awk '$1>1 {print $2}'|sed 's/Parent=//g') <(bedtools intersect -f .2  -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="mRNA"' |awk '{print $9}'|sort|uniq |sed 's/ID=//g'|sed 's/;/\t/g' |cut -f 1)|sort|uniq -c |wc
- 25009   50018  648872
 
 #How much of the two conditions intersect.
 cat <( bedtools intersect   -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="CDS"' |awk '{print $9}'|sort|uniq -c|awk '$1>1 {print $2}'|sed 's/Parent=//g') <(bedtools intersect -f .2  -wo -a LowConfidenceBos_ReddeerReduction.gff -b ../05_EvaluatePrediction/AllAnno.gff |awk '$3=="mRNA"' |awk '{print $9}'|sort|uniq |sed 's/ID=//g'|sed 's/;/\t/g' |cut -f 1)|sort|uniq -c |awk '$1>1' |wc
@@ -321,5 +314,5 @@ awk '$3=="locus"' RepetitiveLowConfidenceMoreThan20UReadsNOHC.gff |wc
   16765  150885 2599470
 
 
-  So now, without doing any filtration on functional annotations.  We have 17,873 high confidence genes and 16,765 genes that are low confidence, expressed with 20 or more reads, and does not have the mRNA overlapping with a repeat by 20% or with two CDS overlapping with a repeat. So about 34k putative High confidence gene models.
+  So now, without doing any filtration on functional annotations.  We have 17,873 high confidence genes and 16,765 genes that are low confidence, expressed with 20 or more reads, and does not have the mRNA overlapping with a repeat by 20% or with two CDS overlapping with a repeat. So about 34k putative gene models.
 ```
