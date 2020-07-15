@@ -23,7 +23,7 @@ The assembly was polished with Pilon 1.23 using CCS PacBio reads and paired end 
 After polishing, another round of small contig elimination was performed by merging repeatmasker coordinates and coordinates from BLAST+ 2.9 (score >300) to the pseudomolecules with Bedtools 2.25.0. If 90% of query length was repetitive and contained within the pseudomolecules, it was eliminated, leaving 151 contigs, 35 pseudomolecules, and the mitochondrial contig.
 
 ### Mitochondria
-BLAST+ 2.9 was used to identify the mitochondrial genome in the assembly, by querying the mitochondrial scaffold of the Cervus elaphus GCA_002197005.1. Scaffold HiC_scaffold_58 was identified as the Mitochondrial genome.  Due to the long read technology, this scaffold was a rolling assembly that contained 3 copies of the MT genome attached end to end.  The scaffold was manually corrected with Samtools 1.9 and renamed to XXX.
+BLAST+ 2.9 was used to identify the mitochondrial genome in the assembly, by querying the mitochondrial scaffold of the Cervus elaphus GCA_002197005.1. Scaffold HiC_scaffold_58 was identified as the Mitochondrial genome.  Due to the long read technology, this scaffold was a rolling assembly that contained 3 copies of the MT genome attached end to end.  The scaffold was manually corrected with Samtools 1.9 and renamed to XXX. The mitochondrial genome was annotated for genes using Mitos2 webserver using RefSeq 89 Metazoa, genetic code of 2, and default settings.  
 
 
 
