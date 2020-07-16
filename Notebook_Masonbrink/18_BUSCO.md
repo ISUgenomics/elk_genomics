@@ -61,10 +61,13 @@ INFO    4104 Total BUSCO groups searched
 
 ### BUSCO 4 Genome mode
 ```
+/work/GIF/remkv6/Elk/31_busco/02_Busco4
+
+
 cp -rf /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config/spec
 ies/CervusCanadensis3/ ~/.conda/pkgs/augustus-3.2.3-boost1.60_0/config/species/.
 
-ml miniconda3; source activate busco4; export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i FinalGenomePilonReducedSoftMaskedRecode.fa --autolineage-euk -o GenomeBUSCO4 -m geno -c 15 -f --augustus_species CervusCanadensis3
+ml miniconda3; source activate busco4; export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config;export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini ; busco -i FinalGenomePilonReducedSoftMaskedRecode.fa --autolineage-euk -o GenomeBUSCO4 -m geno -c 15 -f --augustus_species CervusCanadensis3
 
 ```
 
