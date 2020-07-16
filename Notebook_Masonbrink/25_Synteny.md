@@ -107,6 +107,19 @@ CM008008.1,CM008009.1,CM008010.1,CM008011.1,CM008012.1,CM008013.1,CM008014.1,CM0
 
 java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c RearrangementsCirclecontrol_file.ctl -o RearrangeCircleV1.png
 
+
+
+
+#create a plot of only X and Y chromosomes
+
+vi ChromosomeX.ctl
+###################################################################
+3000
+CM008041.1,CM008042.1,Chromosome_X,Chromosome_Y
+################################################################
+
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c ChromosomeX.ctl -o ChromosomeXCircleV1.png
 ```
 
 ## B. taurus synteny
@@ -163,6 +176,8 @@ MCScanX xyz
 
 #plot all chromosomes vs all chromosomes
 java -classpath /opt/rit/app/mcscanx/20170403/bin/  dot_plotter -g xyz.gff -s xyz.collinearity -c control_file.ctl -o elkvscow
+
+
 cp control_file.ctl Circlecontrol_file.ctl
 
 vi Circlecontrol_file.ctl
@@ -173,4 +188,36 @@ NC_037328.1,NC_037329.1,NC_037330.1,NC_037331.1,NC_037332.1,NC_037333.1,NC_03733
 
 java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c Circlecontrol_file.ctl -o CircleV1.png
 
+
+
+
+
+#Found that Bos taurus have different names for the mRNA and peptides, so addressing
+awk '$3=="CDS" {print $9}' GCF_002263795.1_ARS-UCD1.2_genomic.gff |sed 's/;/\t/g' |awk '{print $1,$2}' |sed 's/ID=cds-//g' |sed 's/Parent=rna-//g' |sort |uniq >makerIndexForProteinNames.map
+
+
+singularity shell "/opt/rit/singularity/images/maker/2.31.10_3.1/maker.simg"
+
+map_data_ids -col 2 makerIndexForProteinNames.map xyz.blast
+
+
+
+## Create rearrangments/fission/fusion only circle plot
+
+vi RearrangedCircolecontrol_file.ctl
+###################################################################
+3000
+NC_037328.1,NC_037329.1,NC_037332.1,NC_037335.1,NC_037336.1,NC_037344.1,NC_037346.1,NC_037350.1,NC_037352.1,Chromosome_03,Chromosome_05,Chromosome_06,Chromosome_08,Chromosome_15,Chromosome_17,Chromosome_19,Chromosome_22,Chromosome_26,Chromosome_28,Chromosome_31,Chromosome_33
+####################################################################
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c RearrangedCirclecontrol_file.ctl -o RearrangedCircleV1.png
+
+
+vi ChromosomeX.ctl
+#################################################################
+3000
+NC_037357.1,NW_020192292.1,Chromosome_X,Chromosome_Y
+####################################################################
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c ChromosomeX.ctl -o ChromosomeXCircleV1.png
 ```
