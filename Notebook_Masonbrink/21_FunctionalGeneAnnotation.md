@@ -339,4 +339,73 @@ cat <( bedtools intersect   -wo -a OrderedAnnotatedGeneModels.gff3 -b ../05_Eval
 wc RepetitiveMrnasOrderedAnnotatedGeneModels.list
  23740  47480 496636 RepetitiveMrnasgttest.list
 
+
+# survey the low confidence genes that have functional annotations other than hypothetical, BAC library, or transposon
+less GTLOWConfidencetest.gff3 |awk '$3=="mRNA"' |grep -v -i -e "integrase" -e "transposon" -e "helitron" -e "maverick" |grep -v -e "LINE" -e "SINE" |grep -v -i -e "hypothetical" -e "transposable" |awk -F";" 'NF>4' |grep -v "null)" |grep -v "BAC" >LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3
+
+cat LowConfidenceOrderedAnnotatedGeneModelsThatCouldBeAdded2Highconfidence.gff3 GTNOTEHighConfidencetest.gff3 >HCLCtest.gff3
+
+
+```
+
+
+### Rename Scaffolds, genes and transcripts
+```
+#/work/gif/remkv6/Olsen/Elk/05a_RenameScaffsNGenes
+
+#maker has issues with the gff format, so it will not rename the genes/mRNAs, need to figure out how to get the format right.
+
+#gets rid of geneID and transcripts associations that are not always correct
+sed 's/geneID=.*;//g' GTOrderedGTNOTEHighConfidencetest.gff3 |sed 's/transcripts=.*;//g' |sed 's/transcripts=.*//g
+' >GeneidTranscriptsRemovedGTOrderedGTNOTEHighConfidencetest.gff3
+
+awk '$3=="gene"' GeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 >genes.gff
+less GeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |awk '$3=="mRNA"' |grep -v "Parent" >mRNAsNoParent.gff
+
+
+cat <(less GeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |awk '$3=="mRNA"' |grep  "Parent") <(awk '$3!="mRNA"' GeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3)|less
+
+
+#adds parent= to each mRNA lacking it.
+bedtools intersect -wo -f .8 -a mRNAsNoParent.gff -b genes.gff |sort -u -k9,9|cut -f 1,2,3,4,5,6,7,8,9,18|sed 's/;/\t/1' |awk -F"\t" '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9";"$11";Name="$9";"$10}' |sed 's/ID=/Parent=/2' |sed 's/;;/;/g'  >415Fix.gff
+
+#concatenates and sorts the gff again
+cat <(less GeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |awk '$3=="mRNA"' |grep  "Parent" |sed 's/;/\t/1' |awk -F"\t" '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9";"$9";"$10}' |sed 's/ID=/Name=/2' |less) <(awk '$3!="mRNA"' GeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3) 415Fix.gff |awk -F"\t" '{if($3=="CDS") {print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\tID="substr($9,8,length($9))"-cds"NR";"$9} else if ($3=="exon") {print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\tID="substr($9,8,length($9))"-exon"NR";"$9} else {print $0}} ' |sort -k1,1V -k4,5n |sed 's/ mikado\./ mikado_/g'  >RevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+
+
+paste <(cut -f 1-8 RevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 ) <(cut -f 9 RevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |sed 's/\./_/g' ) |sed 's/,/-/g' |sed 's/Name=ID=/Name=/g' |sed 's/Name=Parent=/Name=/g' |sed 's/ID=/Parent=/2'  |sort -k1,1V -k4,5n >NoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+
+#run through genometools to get rid of some errors
+gt gff3  -fixregionboundaries -sort -o GTNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 NoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+
+gff3_QC -f ../05_EvaluatePrediction/FinalGenomePilonReducedSoftMaskedRecode.fa  -noncg -g GTNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3  -o error.txt -s statistic.txt
+
+gff3_fix -qc_r error.txt -g GTNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 -og CorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+
+grep -v  "Parent=RLOC" NoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |awk '$3=="mRNA"' >messeUpmRNAs.gff
+
+bedtools intersect -wo -f .8 -a <(sed 's/Parent=.*;//g' messeUpmRNAs.gff |sed 's/Parent=.*//g' ) -b genes.gff |sort -u -k9,9|cut -f 1,2,3,4,5,6,7,8,9,18|sed 's/ID=/Parent=/2' |sed 's/\t//9' >fixedmesseUpmRNAs.gff
+
+cat <(grep  "Parent=RLOC" NoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |awk '$3=="mRNA"' )  <(awk '$3!="mRNA"' NoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 ) fixedmesseUpmRNAs.gff |sort -k1,1V -k4,5n >fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+
+ml maker
+singularity shell "/opt/rit/singularity/images/maker/2.31.10_3.1/maker.simg"
+maker_map_ids --prefix Cercan_  --iterate 1 --justify 8 fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 >test
+map_gff_ids test fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+
+cp ../05_EvaluatePrediction/FinalGenomePilonReducedSoftMaskedRecode.fa .
+#copied from ceres and manipulated to fix spaces
+sed 's/ //g' ScaffoldNames.map |sed 's/S/\tS/g' |sed 's/Chr/\tChr/g' >FixedScaffoldNames.map
+
+map_fasta_ids FixedScaffoldNames.map FinalGenomePilonReducedSoftMaskedRecode.fa
+map_data_ids FixedScaffoldNames.map fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3
+
+samtools faidx FinalGenomePilonReducedSoftMaskedRecode.fa
+
 ```

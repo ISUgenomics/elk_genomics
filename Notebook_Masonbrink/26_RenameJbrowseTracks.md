@@ -1,4 +1,4 @@
-# need to rename the gffs that display in jbrowse to match genome now. 
+# need to rename the gffs that display in jbrowse to match genome now.
 
 ```
 #/work/gif/remkv6/Olsen/Elk/05a_RenameScaffsNGenes/01_OtherGFFs

@@ -107,6 +107,19 @@ CM008008.1,CM008009.1,CM008010.1,CM008011.1,CM008012.1,CM008013.1,CM008014.1,CM0
 
 java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c RearrangementsCirclecontrol_file.ctl -o RearrangeCircleV1.png
 
+
+
+
+#create a plot of only X and Y chromosomes
+
+vi ChromosomeX.ctl
+###################################################################
+3000
+CM008041.1,CM008042.1,Chromosome_X,Chromosome_Y
+################################################################
+
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c ChromosomeX.ctl -o ChromosomeXCircleV1.png
 ```
 
 ## B. taurus synteny
@@ -138,5 +151,73 @@ ln -s ../../01_RedDeer/02_mCscanX/CanadensisMCFormat.gff
 awk '$3=="mRNA" {print $1,$4,$5,$9}' ../GCF_002263795.1_ARS-UCD1.2_genomic.gff |sed 's/ID=rna-//g' |sed 's/;/\t/g' |awk  '{print $1,$4,$2,$3}' |tr " " "\t" >TaurusMCFormat.gff
  cat CanadensisMCFormat.gff TaurusMCFormat.gff >xyz.gff
 
-cat <( bioawk -c fastx '{print $name,length($seq)}' GCA_002197005.1_CerEla1.0_genomic.fna |awk '$2>500000 {print $1}' |sort|uniq|tr "\n" "," ) <( bioawk -c fastx '{print $name,length($seq)}' FinalGenomePilonReducedSoftMaskedRecode.fa |awk '$2>500000 {print $1}' |sort|uniq|tr "\n" "," ) |less
+
+#make the control file
+
+#softlink genomes
+ln -s ../../../05a_RenameScaffsNGenes/FinalGenomePilonReducedSoftMaskedRecode.fa
+ln -s ../GCF_002263795.1_ARS-UCD1.2_genomic.fna
+
+
+cat <( bioawk -c fastx '{print $name,length($seq)}' GCF_002263795.1_ARS-UCD1.2_genomic.fna |awk '$2>5000000 {print $1}' |sort|uniq|tr "\n" "," ) <( bioawk -c fastx '{print $name,length($seq)}' FinalGenomePilonReducedSoftMaskedRecode.fa |awk '$2>5000000 {print $1}' |sort|uniq|tr "\n" "," ) |less
+
+vi control_file.ctl
+##################################################################
+3000
+3000
+NC_037328.1,NC_037329.1,NC_037330.1,NC_037331.1,NC_037332.1,NC_037333.1,NC_037334.1,NC_037335.1,NC_037336.1,NC_037337.1,NC_037338.1,NC_037339.1,NC_037340.1,NC_037341.1,NC_037342.1,NC_037343.1,NC_037344.1,NC_037345.1,NC_037346.1,NC_037347.1,NC_037348.1,NC_037349.1,NC_037350.1,NC_037351.1,NC_037352.1,NC_037353.1,NC_037354.1,NC_037355.1,NC_037356.1,NC_037357.1,NW_020192292.1
+Chromosome_01,Chromosome_02,Chromosome_03,Chromosome_04,Chromosome_05,Chromosome_06,Chromosome_07,Chromosome_08,Chromosome_09,Chromosome_10,Chromosome_11,Chromosome_12,Chromosome_13,Chromosome_14,Chromosome_15,Chromosome_16,Chromosome_17,Chromosome_18,Chromosome_19,Chromosome_20,Chromosome_21,Chromosome_22,Chromosome_23,Chromosome_24,Chromosome_25,Chromosome_26,Chromosome_27,Chromosome_28,Chromosome_29,Chromosome_30,Chromosome_31,Chromosome_32,Chromosome_33,Chromosome_X,Chromosome_Y
+##################################################################
+
+#obtain xyz collinearity file
+ml mcscanx/20170403
+MCScanX xyz
+
+
+#plot all chromosomes vs all chromosomes
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  dot_plotter -g xyz.gff -s xyz.collinearity -c control_file.ctl -o elkvscow
+
+
+cp control_file.ctl Circlecontrol_file.ctl
+
+vi Circlecontrol_file.ctl
+###############################################################################
+3000
+NC_037328.1,NC_037329.1,NC_037330.1,NC_037331.1,NC_037332.1,NC_037333.1,NC_037334.1,NC_037335.1,NC_037336.1,NC_037337.1,NC_037338.1,NC_037339.1,NC_037340.1,NC_037341.1,NC_037342.1,NC_037343.1,NC_037344.1,NC_037345.1,NC_037346.1,NC_037347.1,NC_037348.1,NC_037349.1,NC_037350.1,NC_037351.1,NC_037352.1,NC_037353.1,NC_037354.1,NC_037355.1,NC_037356.1,NC_037357.1,NW_020192292.1,Chromosome_01,Chromosome_02,Chromosome_03,Chromosome_04,Chromosome_05,Chromosome_06,Chromosome_07,Chromosome_08,Chromosome_09,Chromosome_10,Chromosome_11,Chromosome_12,Chromosome_13,Chromosome_14,Chromosome_15,Chromosome_16,Chromosome_17,Chromosome_18,Chromosome_19,Chromosome_20,Chromosome_21,Chromosome_22,Chromosome_23,Chromosome_24,Chromosome_25,Chromosome_26,Chromosome_27,Chromosome_28,Chromosome_29,Chromosome_30,Chromosome_31,Chromosome_32,Chromosome_33,Chromosome_X,Chromosome_Y
+####################################################################################
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c Circlecontrol_file.ctl -o CircleV1.png
+
+
+
+
+
+#Found that Bos taurus have different names for the mRNA and peptides, so addressing
+awk '$3=="CDS" {print $9}' GCF_002263795.1_ARS-UCD1.2_genomic.gff |sed 's/;/\t/g' |awk '{print $1,$2}' |sed 's/ID=cds-//g' |sed 's/Parent=rna-//g' |sort |uniq >makerIndexForProteinNames.map
+
+
+singularity shell "/opt/rit/singularity/images/maker/2.31.10_3.1/maker.simg"
+
+map_data_ids -col 2 makerIndexForProteinNames.map xyz.blast
+
+
+
+## Create rearrangments/fission/fusion only circle plot
+
+vi RearrangedCircolecontrol_file.ctl
+###################################################################
+3000
+NC_037328.1,NC_037329.1,NC_037332.1,NC_037335.1,NC_037336.1,NC_037344.1,NC_037346.1,NC_037350.1,NC_037352.1,Chromosome_03,Chromosome_05,Chromosome_06,Chromosome_08,Chromosome_15,Chromosome_17,Chromosome_19,Chromosome_22,Chromosome_26,Chromosome_28,Chromosome_31,Chromosome_33
+####################################################################
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c RearrangedCirclecontrol_file.ctl -o RearrangedCircleV1.png
+
+
+vi ChromosomeX.ctl
+#################################################################
+3000
+NC_037357.1,NW_020192292.1,Chromosome_X,Chromosome_Y
+####################################################################
+
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c ChromosomeX.ctl -o ChromosomeXCircleV1.png
 ```
