@@ -31,7 +31,10 @@
 |[Whole-genome sequence of the bovine blood fluke Schistosoma bovis supports interspecific hybridization with S. haematobium](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1007513) |Schistosoma bovis  | PLOS pathogens (6.158) |  374 Mb | SOAPdenovo2 | no| N50=203kb|
 |[Complete Assembly of the Genome of an Acidovorax citrulli Strain Reveals a Naturally Occurring Plasmid in This Species](https://www.frontiersin.org/articles/10.3389/fmicb.2019.01400/full) |  Acidovorax citrulli  (bacteria) | Frontiers in Microbiology| 4.8 Mb| Canu| no |N50 = 19 kb|
 | [Whole Genome Sequence Analysis Reveals Lower Diversity and Frequency of Acquired Antimicrobial Resistance (AMR) Genes in E. coli From Dairy Herds Compared With Human Isolates From the Same Region of Central Zambia](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2670-3) |E coli| frontiers in Microbiology | | Spades | |
-
+|https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0233363| S. warneri | Plos One | 2.5 Mb  | Celera | |
+|[Draft genome of multiple resistance donor plant Sinapis alba: An insight into SSRs, annotations and phylogenetics](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0231002)|S. alba | Plos One | 459 Mb | SOAPdenovo2 | | 4 million contigs, n50 was 1742 bp|
+|[Unusual genome expansion and transcription suppression in ectomycorrhizal Tricholoma matsutake by insertions of transposable elements](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0227923)| Tricholoma matsutake | Plos one | 139 Mb | AllPaths| |5255 scaffolds N50=10.2kb|
+|[A partial genome assembly of the miniature parasitoid wasp, Megaphragma amalphitanum](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0226485)| wasp | Plos One| 346 Mb | AByss| |10.2 Kb|
 
 ## Type of analysis done in publications
 
@@ -71,4 +74,4 @@
 * KEGG function annotation
 
 ### Bacteria
-* analysis of presence or absence of resistance genes 
+* analysis of presence or absence of resistance genes
