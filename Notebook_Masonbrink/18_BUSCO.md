@@ -71,6 +71,45 @@ ml miniconda3; source activate busco4;  ; busco -i FinalGenomePilonReducedSoftMa
 
 #export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config;export BUSCO_CONFIG_FILE=/home/remkv6/.conda/envs/busco4/config/config.ini
 
+cetartiodactyla_odb10
+#############################################################################################
+# BUSCO version is: 4.0.2
+# The lineage dataset is: cetartiodactyla_odb10 (Creation date: 2019-11-20, number of species: 13335, number of BUSCOs: 22)
+# Summarized benchmarking in BUSCO notation for file FinalGenomePilonReducedSoftMaskedRecode.fa
+# BUSCO was run in mode: genome
+
+        ***** Results: *****
+
+        C:88.1%[S:86.0%,D:2.1%],F:2.1%,M:9.8%,n:13335
+        11749   Complete BUSCOs (C)
+        11467   Complete and single-copy BUSCOs (S)
+        282     Complete and duplicated BUSCOs (D)
+        286     Fragmented BUSCOs (F)
+        1300    Missing BUSCOs (M)
+        13335   Total BUSCO groups searched
+#############################################################################################
+
+
+eukaryota_odb10
+#############################################################################################
+# BUSCO version is: 4.0.2
+# The lineage dataset is: eukaryota_odb10 (Creation date: 2019-11-20, number of species: 70, number of BUSCOs: 255)
+# Summarized benchmarking in BUSCO notation for file FinalGenomePilonReducedSoftMaskedRecode.fa
+# BUSCO was run in mode: genome
+
+        ***** Results: *****
+
+        C:64.4%[S:62.0%,D:2.4%],F:3.1%,M:32.5%,n:255
+        164     Complete BUSCOs (C)
+        158     Complete and single-copy BUSCOs (S)
+        6       Complete and duplicated BUSCOs (D)
+        8       Fragmented BUSCOs (F)
+        83      Missing BUSCOs (M)
+        255     Total BUSCO groups searched
+#############################################################################################
+
+
+
 ```
 
 ### BUSCO 4 Protein Mode Final Primary Annotations
