@@ -34,3 +34,7 @@ A final version of predicted repeats was obtained using EDTA 1.7.9.
 
 ### BUSCO
 Universal single copy orthologs were assessed using BUSCO 4.0, with the eukaryota_odb10 dataset.
+
+### Synteny
+With the predicted proteins from B. taurus, C. elaphus and C. canadensis we inferred gene orthology using Blastp at cutoffs of an evalue of 1e-5, 50% query cover, and 70% identity.
+Gene-based synteny was predicted using iAdHoRe 3.0.01 [81] with prob_cutoff=0.001, level 2 multiplicons only, gap_size=5, cluster_gap=15, q_value=0.01, and a minimum of 3 anchor points. Synteny figures were produced using Circos (0.69.2) [82]
