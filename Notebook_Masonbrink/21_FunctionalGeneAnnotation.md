@@ -409,3 +409,33 @@ map_data_ids FixedScaffoldNames.map fixedNoHashCorrectedNoPeriodsRevisedGeneidTr
 samtools faidx FinalGenomePilonReducedSoftMaskedRecode.fa
 
 ```
+
+#### Gene functions are not displaying, add note to gene features
+```
+#my laptop
+#/home/remkv6/Documents/1ElkUSDAGenome/RenamedJBrowseFinal
+
+
+
+awk '$3=="gene"' fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 >GenesOnly.gff3
+
+#check to make sure we got all the genes.
+awk '$3=="mRNA" {print $9}' fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |grep -v "Note" |sed 's/Parent=//g' |sed 's/ID=//g' |sed 's/;/\t/g' |cut -f 2 |sort|uniq|cat  annotatedGenes.list -|sort|uniq|wc
+wc GenesOnly.gff3
+
+awk '{print $1}'  annotatedGenes.list |grep -v - GenesOnly.gff3 >UnannotatedGenes.gff3
+awk '{print $1}'  annotatedGenes.list |while read line; do grep  $line GenesOnly.gff3;done >AnnotatedGenes.gff3
+
+paste AnnotatedGenes.gff3 annotatedGenes.list |cut -f 1-9,11|sed 's/\t/;/9' |cat  - UnannotatedGenes.gff3 |cat - <(awk '$3!="gene"' fixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3) |sort -k1,1V -k4,5nr >GenePredictionsDisplayFixed.gff3
+
+#transfer to nova to get sorted properly
+#/work/gif/remkv6/Olsen/Elk/05a_RenameScaffsNGenes
+
+```
+
+### Statistics of functional gene predictions
+```
+#/home/remkv6/Documents/1ElkUSDAGenome/RenamedJBrowseFinal
+
+
+```
