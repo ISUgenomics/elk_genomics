@@ -34,10 +34,10 @@ N90 Scaffold length                  51438166
 L90 Scaffold length                  29
 
                                       #Scaffs   % Scaffolds      Nucleotides     % Nucleotide Content
-Number of Scaffolds [0-1K) nt         0          0.0 %   0               0.0 %
+Number of Scaffolds [0-1K) nt         0          0.0 %           0               0.0 %
 Number of Scaffolds [1K-10K) nt       94         50.81 %         393769          0.015 %
 Number of Scaffolds [10K-100K) nt     56         30.27 %         1472118         0.058 %
-Number of Scaffolds [100K-1M) nt      0          0.0 %   0       0.0 %
+Number of Scaffolds [100K-1M) nt      0          0.0 %           0               0.0 %
 Number of Scaffolds [1M-10M) nt       1          0.540 %         7618728         0.301 %
 Number of Scaffolds > 10M nt          34         18.37 %         2517128392      99.62 %
 ```
@@ -47,6 +47,6 @@ Number of Scaffolds > 10M nt          34         18.37 %         2517128392     
 ```
 more Cercan.gff3 | awk '$3=="gene"' | wc
   18960  170640 1644756
-severin@novagpu001 /work/gif/archiveResults/Olsen/Elk$ more Cercan.gff3 | awk '$3=="mRNA"' | wc
+more Cercan.gff3 | awk '$3=="mRNA"' | wc
   33433 1417723 18296056
 ```
