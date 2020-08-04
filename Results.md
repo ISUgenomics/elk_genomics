@@ -5,7 +5,7 @@
 A lack of contamination was confirmed using both the initial Masurca assembly and final pseudomolecule assembly.  We aligned the Pacbio subreads to the genome, aligned contigs to the NT database with BLAST, and compiled this information with Blobtools.  All putative contaminant contigs were ruled out via manual investigation.  
 Additional steps were taken to ensure the completeness of the genome, via mapping the input assembly reads to the genome.  90.7% of PacBio CCS reads aligned to the genome, while 87.3% of Illumina DNA-seq aligned.
 ### PhiX
-No significant hits were identified to indicate contamination with PhiX
+No significant hits were identified to indicate contamination with PhiX.
 
 ### BUSCO
 Busco 4.0.2 was used to estimate the completeness of the genome assembly and annotation. BUSCO in genome mode predicted C:64.4%[S:62.0%,D:2.4%],F:3.1%,M:32.5%,n:255 and C:88.1%[S:86.0%,D:2.1%],F:2.1%,M:9.8%,n:13335 on eukaryota_odb10 and cetartiodactyla_odb10, respectively.  In protein mode, a remarkable score improvement is seen in both eukaryota and cetartiodactyla at C:97.7%[S:41.2%,D:56.5%],F:1.2%,M:1.1%,n:255 and C:92.1%[S:40.2%,D:51.9%],F:1.7%,M:6.2%,n:13335.
