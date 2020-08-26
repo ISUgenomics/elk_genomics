@@ -29,7 +29,7 @@ bamtools convert -format fasta -in $ccs > ${ccs%.*}.fa
 ###  CCS Stats
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/10_CCS_polish
-cat *ccs.fa |awk 'substr($1,1,1)!=">" {print length($0)}' |~/common_scripts/summary.sh
+cat *ccs.fa |awk '$0 ~ ">" {if (NR > 1) {print c;} c=0;printf substr($0,2,100) "\t"; } $0 !~ ">" {c+=length($0);} END { print c; }' |cut -f 2 |~/common_scripts/summary.sh
 Total:  1,819,991,677
 Count:  149,340
 Mean:   12,186
