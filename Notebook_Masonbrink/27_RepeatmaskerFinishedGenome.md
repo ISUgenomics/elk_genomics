@@ -95,3 +95,31 @@ Simple repeats:     480790     19602725 bp    0.78 %
 Low complexity:      87206      4259264 bp    0.17 %
 ==================================================
 ```
+
+
+## Combine this value with edta using bedtools merge
+```
+#/work/gif/remkv6/Olsen/Elk/08_RenameAgain
+
+#they have to have overlap to be merged.
+cat  Repeatmasker.gff3 HeaderDashedtidyAllAnnoEDTA.gff |sort -k1,1V -k4,5n |bedtools merge -i - >edtaRepmaskerMerge.gff3
+
+#check to make sure there is not stranded information
+awk '$2>$3' edtaRepmaskerMerge.gff3|wc
+      0       0       0
+
+#total repeats repeatmasker gff + edta gff       
+awk '{print $3-$2}' edtaRepmaskerMerge.gff3|summary.sh
+Total:  960,683,749
+Count:  2,828,366
+Mean:   339
+Median: 197
+Min:    6
+Max:    84,693
+
+# get bp of repeat per chromosome
+awk '{print $1}' edtaRepmaskerMerge.gff3 |sort|uniq|while read line; do echo "awk '\$1==\""$line"\"{print \$3-\$2}' edtaRepmaskerMerge.gff3|summary.sh >>RepeatsPerChromosomeSummaries.txt"; done >test.sh
+
+
+
+```

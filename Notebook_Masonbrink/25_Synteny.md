@@ -79,7 +79,7 @@ control_file.ctl
 ##################################################################
 3000
 3000
-CM008008.1,CM008009.1,CM008010.1,CM008011.1,CM008012.1,CM008013.1,CM008014.1,CM008015.1,CM008016.1,CM008017.1,CM008018.1,CM008019.1,CM008020.1,CM008021.1,CM008022.1,CM008023.1,CM008024.1,CM008025.1,CM008026.1,CM008027.1,CM008028.1,CM008029.1,CM008030.1,CM008031.1,CM008032.1,CM008033.1,CM008034.1,CM008035.1,CM008036.1,CM008037.1,CM008038.1,CM008039.1,CM008040.1,CM008041.1,CM008042.1
+Ce_Chr_1,Ce_Chr_2,Ce_Chr_3,Ce_Chr_4,Ce_Chr_5,Ce_Chr_6,Ce_Chr_7,Ce_Chr_8,Ce_Chr_9,Ce_Chr_10,Ce_Chr_11,Ce_Chr_12,Ce_Chr_13,Ce_Chr_14,Ce_Chr_15,Ce_Chr_16,Ce_Chr_17,Ce_Chr_18,Ce_Chr_19,Ce_Chr_20,Ce_Chr_21,Ce_Chr_22,Ce_Chr_23,Ce_Chr_24,Ce_Chr_25,Ce_Chr_26,Ce_Chr_27,Ce_Chr_28,Ce_Chr_29,Ce_Chr_30,Ce_Chr_31,Ce_Chr_32,Ce_Chr_33,Ce_Chr_X,Ce_Chr_Y
 Chromosome_01,Chromosome_02,Chromosome_03,Chromosome_04,Chromosome_05,Chromosome_06,Chromosome_07,Chromosome_08,Chromosome_09,Chromosome_10,Chromosome_11,Chromosome_12,Chromosome_13,Chromosome_14,Chromosome_15,Chromosome_16,Chromosome_17,Chromosome_18,Chromosome_19,Chromosome_20,Chromosome_21,Chromosome_22,Chromosome_23,Chromosome_24,Chromosome_25,Chromosome_26,Chromosome_27,Chromosome_28,Chromosome_29,Chromosome_30,Chromosome_31,Chromosome_32,Chromosome_33,Chromosome_X,Chromosome_Y
 ##################################################################
 
@@ -179,7 +179,7 @@ MCScanX xyz
 
 
 #plot all chromosomes vs all chromosomes
-java -classpath /opt/rit/app/mcscanx/20170403/bin/  dot_plotter -g xyz.gff -s xyz.collinearity -c control_file.ctl -o elkvscow
+java -classpath /opt/rit/app/mcscanx/20170403/bin/  dot_plotter -g xyz.gff -s xyz.collinearity -c control_file.ctl -o elkvscow.png
 
 
 cp control_file.ctl Circlecontrol_file.ctl
