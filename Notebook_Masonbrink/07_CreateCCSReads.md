@@ -25,3 +25,29 @@ module load bamtools
 ccs --polish --numThreads 40 --logLevel "FATAL" --maxLength=100000 --reportFile ${ccs%.*}_report.txt --minPasses 1 $sr $ccs
 bamtools convert -format fasta -in $ccs > ${ccs%.*}.fa
 ###############################################################################
+```
+###  CCS Stats
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/10_CCS_polish
+cat *ccs.fa |awk '$0 ~ ">" {if (NR > 1) {print c;} c=0;printf substr($0,2,100) "\t"; } $0 !~ ">" {c+=length($0);} END { print c; }' |cut -f 2 |~/common_scripts/summary.sh
+Total:  1,819,991,677
+Count:  149,340
+Mean:   12,186
+Median: 13,197
+Min:    117
+Max:    48,127
+
+```
+### Subread stats
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/10_CCS_polish
+for f in *subreads.bam; do echo "ml samtools; samtools view "$f" |awk '{print length(\$10)}' >"${f%.*}".lengths";done  >samtoolsLengths.sh
+
+cat *lengths |~/common_scripts/summary.sh
+Total:  52,353,735,044
+Count:  5,702,794
+Mean:   9,180
+Median: 8,093
+Min:    1
+
+```
