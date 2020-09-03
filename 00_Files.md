@@ -59,6 +59,9 @@
 #nova
 /work/gif/remkv6/Olsen/Elk/08_RenameAgain/01_Move2Box/FinalHighConfidenceGenes.gff3.gz
 /work/gif/remkv6/Olsen/Elk/08_RenameAgain/01_Move2Box/FinalHighConfidenceGenes.gff3.gz.tbi
+
+/work/gif/remkv6/Olsen/Elk/08_RenameAgain/01_Move2Box/FinalHighConfidenceGenes_transcripts.fasta
+/work/gif/remkv6/Olsen/Elk/08_RenameAgain/01_Move2Box/FinalHighConfidenceGenes_proteins.fasta
 ```
 ## SNP data
 
