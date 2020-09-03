@@ -149,12 +149,31 @@ cat bosImmune_2_Bos/bestBlast_output.txt  bosImmune_2_Bos/bestBlast_output.txt b
 ```
 
 
-So It appears the blast file contains all the different regions of the genes so we really are seeing 8 genes (NW_001494075_IGHJ1, KT723008_IGHJ2, IMGT000049_TRDC, D16120_TRGJ2, AY644518_TRGJ1, AY644517_TRGC, AY2277782_TRAJ31, AY149283_IGHJ1)
+So It appears the blast file contains all the different regions of the genes so we really are seeing 9 genes
+
+| gene | chromosome | start position|
+| -- | -- | --|
+|AY644518_TRGJ1| 01| 102107 |
+|KT723008_IGHJ2|01| 509129 |
+|AC172685_IGHA| 01| 655709|
+|IMGT000049_TRDC|01| 3301039|
+|D16120_TRGJ2|02| 338 |
+|AY149283_IGHJ1| 02 | 783 |
+|AY2277782_TRAJ31| 02| 1725 |
+|AY644517_TRG| 02 |167787 |
+|NW_001494075_IGHJ1|03| 39638 |
+
 
 And for some reason 2 bos immune genes did not have a blast hit to the bos genome, which is strange.  
+
+locations in cow
+
+* 01:
 
 ## Literature
 
 Looks like there is some interesting aspects to what is present in cattle based on this [paper: Immunoglobulin genes and diversity: what we have learned from domestic animals](https://jasbsci.biomedcentral.com/articles/10.1186/2049-1891-3-18 )
 
-It makes me wonder if there immune genes that are only found in Elk and not in cattle.
+It makes me wonder if there immune genes that are only found in Elk and not in cow.
+
+I was hoping for a result that would just jump out and be aha but looks like I would need to do a much deeper literature review.  Time to bring in the domain experts.
