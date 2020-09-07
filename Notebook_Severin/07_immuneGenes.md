@@ -151,7 +151,7 @@ cat bosImmune_2_Bos/bestBlast_output.txt  bosImmune_2_Bos/bestBlast_output.txt b
 
 So It appears the blast file contains all the different regions of the genes so we really are seeing 9 genes
 
-| gene | chromosome | start position|
+| gene | chromosome | start position in Bos|
 | -- | -- | --|
 |AY644518_TRGJ1| 01| 102107 |
 |KT723008_IGHJ2|01| 509129 |
@@ -166,9 +166,7 @@ So It appears the blast file contains all the different regions of the genes so 
 
 And for some reason 2 bos immune genes did not have a blast hit to the bos genome, which is strange.  
 
-locations in cow
-
-* 01:
+It is notable that the immune genes lost in Elk happen to occur on Elk chromosomes that underwent a large scale chromosomal rearrangment and fusion. This chromosomal assembly of the Elk genome will provide an excellent resource for further investigation of how these genes may be involved in the lack of adaptive cellular immune responses to existing Brucella vaccines.                              
 
 ## Literature
 
