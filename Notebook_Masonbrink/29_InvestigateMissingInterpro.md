@@ -11,7 +11,7 @@ It appears to be an issue with how I had to name the gene names for the interpro
 
 
 # copied geneRenaming.map from nova /work/gif/remkv6/Olsen/Elk/08_RenameAgain
-#this had gene names that were removed later, so need to cull those
+#this had gene names that were removed later (low confidence), so need to cull those
 less OrderedfixedNoHashCorrectedNoPeriodsRevisedGeneidTranscriptsRemovedOrderedGTNOTEHighConfidencetest.gff3 |awk '$3=="mRNA"' |sed 's/;/\t/g' |cut -f 9 |sort|uniq >mRNAPresentLists
 
 #it has the correct number of mRNA's
