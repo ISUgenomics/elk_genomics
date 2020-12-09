@@ -176,3 +176,13 @@ Looks like there is some interesting aspects to what is present in cattle based 
 It makes me wonder if there immune genes that are only found in Elk and not in cow.
 
 I was hoping for a result that would just jump out and be aha but looks like I would need to do a much deeper literature review.  Time to bring in the domain experts.
+
+
+## transfer back to Nova
+
+* nova /work/gif/severin/Olsen/Elk2020/07_immuneGenes
+* Nov 2, 2020
+
+```
+rsync -avz -e ssh severin@condodtn.its.iastate.edu:/ptmp/GIF/severin/Olsen/elk/07_immuneGenes/ .
+```
