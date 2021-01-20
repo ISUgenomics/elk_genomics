@@ -22,11 +22,7 @@ William Edwards Wildlife Health Laboratory, Wyoming Game and Fish Department, 11
 
 Fred Tatum Respiratory Diseases Research Unit, National Animal Disease Center, Agricultural Research Service, U.S. Department of Agriculture, Ames, IA, United States of America  fred.tatum@usda.gov
 
-<<<<<<< HEAD
 Jeffrey Williams  Infectious Bacterial Diseases Research Unit, National Animal Disease Center, Agricultural Research Service, U.S. Department of Agriculture, Ames, IA, United States of America  mjwilli90@gmail.com
-=======
-Jeffrey Williams  Infectious Bacterial Diseases Research Unit, National Animal Disease Center, Agricultural Research Service, U.S. Department of Agriculture, Ames, IA, United States of America .  mjwilli90@gmail.com
->>>>>>> e88f4980d12397c3ccf715bdc37ebfb1a87d57ce
 
 Jenny Wilson-Welder Infectious Bacterial Diseases Research Unit, National Animal Disease Center, Agricultural Research Service, U.S. Department of Agriculture, Ames, IA, 50010 United States of America 50010 jennifer.wilson-welder@usda.gov
 
