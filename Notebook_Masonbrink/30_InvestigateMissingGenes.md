@@ -372,3 +372,23 @@ NC_037337.1:22353175-22353449gene       0       0       0       0       0       
 NC_037348.1:208228-208481gene   0       0       0       0       0       0       0       0       0       0       0       0
 #######################################################################################
 ```
+
+### Genomic structure of where missing genes should be.
+
+```
+NC_037331.1:50155331-50155587 --> Bt_Chr3  50155331  50155587
+NC_037331.1:82742456-82742715 --> Bt_Chr3 82742456  82742715
+NC_037337.1:22353175-22353449 --> Bt_Chr10  22353175  22353449
+NC_037348.1:208228-208481 --> Bt_Chr21  208228  208481
+
+vi MissingGeneRegionsCattle.bed
+##################################
+Bt_Chr3  50155331  50155587
+Bt_Chr3 82742456  82742715
+Bt_Chr10  22353175  22353449
+Bt_Chr21  208228  208481
+#############################
+
+less SyntenicRibbons.conf |sort -k 4,5 |awk '{print $4,$5,$6,$1,$2,$3}' |tr " " "\t" |bedtools intersect -wo -a - -b MissingGeneRegionsCattle.bed |less
+```
+These regions were not found to be in synteny.
