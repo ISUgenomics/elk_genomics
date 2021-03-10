@@ -340,21 +340,17 @@ Not found
 >NC_037348.1:208308-208401
 ###############################
 
-#Grab those 7 fastas with another 20bp on each side for mapping rnaseq
+#Grab those 7 fastas with another 800bp on each side for mapping rnaseq
 less Cattle20bpGeneExtractsMissing.blastout|awk '{print $1}' |grep -v -f - <(grep ">"  Cattle20bpGeneExtractsMissing.fasta) |sed 's/>//g' |sed 's/:/\t/g' |sed 's/-/\t/g' |awk '
 {print $1":"$2-80"-"$3+80}' |while read line ;do samtools faidx  GCF_002263795.1_ARS-UCD1.2_genomic.fna  $line; done >Cattle100bpGeneExtractsMissing.fasta
 ```
 
-Create the Fasta and gff
+# Create a cattle+elk Fasta and gff to measure read counts
 ```
->NC_037337.1:22272985-22273081
->NC_037337.1:22290520-22290619
->NC_037337.1:22317764-22317866
->NC_037337.1:22324865-22324958
->NC_037337.1:22334720-22334816
->NC_037348.1:59202-59307
->NC_037348.1:208308-208401
 
+Missing.bed
+########################################################
+#bed file of those found with direct blast
 Chromosome_03 78366825 78366872
 Chromosome_03 78375135 78375190
 Chromosome_03 78406593 78406647
@@ -372,4 +368,56 @@ Chromosome_06 20900746 20900803
 Chromosome_06 20911916 20911974
 Chromosome_06 20923357 20923411
 Chromosome_17 7781035 7781142
+#bed file of those found with blast +borders
+Chromosome_03 47250816 47250912
+Chromosome_06 20866573 20866670
+Chromosome_06 20871319 20871414
+Chromosome_06 20868765 20868860
+Chromosome_06 20872798 20872884
+Chromosome_06 20873358 20873428
+Chromosome_06 20887918 20888014
+Chromosome_06 20895321 20895414
+Chromosome_06 20903523 20903616
+Chromosome_06 20909128 20909227
+Chromosome_06 20940354 20940465
+Chromosome_17 7755492 7755581
+#those missing completely
+NC_037337.1:22272905-22273161   1       257
+NC_037337.1:22290440-22290699   1       260
+NC_037337.1:22317684-22317946   1       263
+NC_037337.1:22324785-22325038   1       254
+NC_037337.1:22334640-22334896   1       257
+NC_037348.1:59122-59387 1       266
+NC_037348.1:208228-208481       1       254
+##########################################################
+
+
+
+#Fasta sequences of those that could not be found with tblastn, blastn, or blastn +20bp borders. Extracted with an additional 80bp+20bp+seq+2-bp+80bp so these regions might map whole reads to compete with the genome
+
+>NC_037337.1:22272985-22273081
+>NC_037337.1:22290520-22290619
+>NC_037337.1:22317764-22317866
+>NC_037337.1:22324865-22324958
+>NC_037337.1:22334720-22334816
+>NC_037348.1:59202-59307
+>NC_037348.1:208308-208401
+
+#gets the sequence lengths of the added cattle regions
+bioawk -c fastx '{print $name,"1",length($seq)}' Cattle100bpGeneExtractsMissing.fasta |
+cat Cattle100bpGeneExtractsMissing.fasta FinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa >AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa
+
+#putative gff for expression
+less Missing.bed |tr "\t" " " |awk '{print $1,"NA","gene",$2,$3,"-",".",".","ID="$1":"$2"-"$3}' |tr " " "\t" >AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff
+
+```
+
+#transfer to ceres for expression
+```
+/home/rick.masonbrink/elk_bison_genomics/Masonbrink/32_MissingGeneExpression
+sed -i 's/MissingGenesAddedToElkGenome.fasta/AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa/g' AlignAndCount*sub
+sed -i 's/Fragments.gff/AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff/g' AlignAndCount*sub
+
+ml hisat2;hisat2-build AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa
+
 ```
