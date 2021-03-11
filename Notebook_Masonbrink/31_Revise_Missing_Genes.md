@@ -412,12 +412,24 @@ less Missing.bed |tr "\t" " " |awk '{print $1,"NA","gene",$2,$3,"-",".",".","ID=
 
 ```
 
-#transfer to ceres for expression
+### transfer to ceres for expression
+
+
+### RNA-seq expression of "missing" gene regions and of cattle regions
 ```
-/home/rick.masonbrink/elk_bison_genomics/Masonbrink/32_MissingGeneExpression
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/32_MissingGeneExpression
 sed -i 's/MissingGenesAddedToElkGenome.fasta/AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa/g' AlignAndCount*sub
 sed -i 's/Fragments.gff/AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff/g' AlignAndCount*sub
 
 ml hisat2;hisat2-build AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa
+
+```
+
+### Pacbio assessement of missing genes
+```
+#/home/rick.masonbrink/elk_bison_genomics/Masonbrink/33_MissingGenesPacbioAlignment
+ml minimap2/2.6;minimap2 -H -a -o AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam -t 40 -x asm20 AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa  AllFastq.fastq;
+ml samtools; samtools view AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam |samtools sort -o AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.bam ; ml subread; featureCounts -T 40 -p -t gene -g ID -a AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff  -o AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES_counts_genes.txt AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.bam
+
 
 ```
