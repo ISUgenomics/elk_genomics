@@ -423,13 +423,95 @@ sed -i 's/Fragments.gff/AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAME
 
 ml hisat2;hisat2-build AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa
 
+#compile results
+ls *Fragments_counts_genes.txt |while read line; do echo "<( cut -f 7 "$line") " ;done |tr "\n" "\ " |less
+
+
+paste <( cut -f 1,7 Elk-kidney_S25_L003_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-kidney_S25_L004_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-lung_S26_L003_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-lung_S26_L004_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-Mes-LN_S24_L003_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-Mes-LN_S24_L004_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-muscle_S21_L003_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-muscle_S21_L004_R1_001Fragments_counts_genes.txt)  <( cut -f 7 ElkpscapLN_S22_L003_R1_001Fragments_counts_genes.txt)  <( cut -f 7 ElkpscapLN_S22_L004_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-spleen_S23_L003_R1_001Fragments_counts_genes.txt)  <( cut -f 7 Elk-spleen_S23_L004_R1_001Fragments_counts_genes.txt) |less
+
+
+##############################################################################################
+Geneid  Elk-kidney_S25_L003_R1_001_sorted.bam   Elk-kidney_S25_L004_R1_001_sorted.bam   Elk-lung_S26_L003_R1_001_sorted.bam     Elk-lung_S26_L004_R1_001_sorted.bam     Elk-Mes-LN_S24_L003_R1_001_sorted.bam   Elk-Mes-LN_S24_L004_R1_001_sorted.bam   Elk-muscle_S21_L003_R1_001_sorted.bam   Elk-muscle_S21_L004_R1_001_sorted.bam   ElkpscapLN_S22_L003_R1_001_sorted.bam   ElkpscapLN_S22_L004_R1_001_sorted.bam   Elk-spleen_S23_L003_R1_001_sorted.bam   Elk-spleen_S23_L004_R1_001_sorted.bam
+Chromosome_03:78366825-78366872 0       1       1       1       24      15      0       0       21      18      37      28
+Chromosome_03:78375135-78375190 0       0       5       3       16      22      0       0       31      25      50      39
+Chromosome_03:78406593-78406647 0       0       0       0       0       1       0       0       2       1       1       0
+Chromosome_06:20860857-20860918 3       4       10      8       129     117     2       0       31      27      18      19
+Chromosome_06:20865405-20865459 1       3       9       15      94      97      1       0       21      20      9       13
+Chromosome_06:20868786-20868839 0       0       0       0       0       0       0       0       0       0       0       0
+Chromosome_06:20871340-20871393 0       0       0       0       0       0       0       0       0       0       0       0
+Chromosome_06:20879847-20879902 3       2       8       6       143     117     0       2       13      26      15      10
+Chromosome_06:20885452-20885505 4       4       8       6       143     138     0       0       24      20      14      11
+Chromosome_06:20889617-20889672 3       4       5       12      122     119     0       0       20      19      16      15
+Chromosome_06:20892783-20892838 0       2       5       4       67      77      0       0       16      12      4       8
+Chromosome_06:20896025-20896067 1       3       11      8       123     108     0       1       20      23      12      11
+Chromosome_06:20897062-20897112 5       7       6       7       108     129     0       0       36      21      15      7
+Chromosome_06:20900746-20900803 3       3       3       5       84      102     0       0       19      21      22      8
+Chromosome_06:20911916-20911974 1       3       3       7       91      68      0       0       15      14      11      8
+Chromosome_06:20923357-20923411 2       3       1       2       26      16      0       0       3       7       5       3
+Chromosome_17:7781035-7781142   1       1       4       5       110     128     0       0       192     14      173     16
+Chromosome_03:47250816-47250912 0       0       0       0       11      3       0       0       14      20      27      24
+Chromosome_06:20866573-20866670 2       6       8       7       121     118     2       0       29      50      18      11
+Chromosome_06:20871319-20871414 1       0       2       1       20      22      0       0       4       2       3       2
+Chromosome_06:20868765-20868860 1       0       0       1       15      20      0       0       1       7       0       3
+Chromosome_06:20872798-20872884 4       3       13      14      194     198     2       0       26      37      21      25
+Chromosome_06:20873358-20873428 6       8       5       7       142     167     1       0       31      21      23      15
+Chromosome_06:20887918-20888014 3       3       6       5       191     155     0       0       27      35      27      23
+Chromosome_06:20895321-20895414 5       5       7       8       114     119     0       0       26      31      18      16
+Chromosome_06:20903523-20903616 0       2       12      6       103     100     0       0       22      16      12      16
+Chromosome_06:20909128-20909227 0       6       6       2       116     132     0       1       21      19      7       8
+Chromosome_06:20940354-20940465 8       5       83      89      133     112     1       1       298     285     192     212
+Chromosome_17:7755492-7755581   0       0       0       1       25      44      0       0       12      10      4       14
+NC_037337.1:22272905-22273161:1-257     0       0       0       0       0       0       0       0       0       0       0       0
+NC_037337.1:22290440-22290699:1-260     0       0       0       0       0       0       0       0       0       0       0       0
+NC_037337.1:22317684-22317946:1-263     0       0       0       0       0       0       0       0       0       0       0       0
+NC_037337.1:22324785-22325038:1-254     0       0       0       0       0       0       0       0       0       0       0       0
+NC_037337.1:22334640-22334896:1-257     0       0       0       0       0       0       0       0       0       0       0       0
+NC_037348.1:59122-59387:1-266   0       0       0       0       0       0       0       0       0       0       0       0
+NC_037348.1:208228-208481:1-254 0       0       0       0       0       0       0       0       0       0       0       0
+##################################################################################################
+
 ```
 
 ### Pacbio assessement of missing genes
 ```
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/33_MissingGenesPacbioAlignment
-ml minimap2/2.6;minimap2 -H -a -o AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam -t 40 -x asm20 AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa  AllFastq.fastq;
-ml samtools; samtools view AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam |samtools sort -o AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.bam ; ml subread; featureCounts -T 40 -p -t gene -g ID -a AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff  -o AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES_counts_genes.txt AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.bam
+ml minimap2/2.6;minimap2 -a -L -t 40 -x map-pb AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa  AllFastq.fastq >NamedAddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam
+ml subread; featureCounts -T 40 -M -O -t gene -g ID -a AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff  -o NamedAddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES_counts_genes.txt NamedAddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam
 
 
+
+```
+
+
+### Assess the nucleotide content of those regions suspected to be missing
+```
+#/work/gif/remkv6/Olsen/Elk/10_PortsFromCondo/36_GeneRemnants
+
+ml bedtools2;ml samtools;bedtools getfasta -fi AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa -bed AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff -fo AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fasta
+new_Assemblathon.pl AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fasta
+
+######################################################################################################
+Number of scaffolds         36
+Total size of scaffolds       3923
+    Longest scaffold        266
+   Shortest scaffold         43
+Number of scaffolds > 1K nt          0   0.0%
+Number of scaffolds > 10K nt          0   0.0%
+Number of scaffolds > 100K nt          0   0.0%
+Number of scaffolds > 1M nt          0   0.0%
+Number of scaffolds > 10M nt          0   0.0%
+  Mean scaffold size        109
+Median scaffold size         90
+ N50 scaffold length        108
+  L50 scaffold count          9
+ n90 scaffold length         55
+  L90 scaffold count         29
+         scaffold %A      24.75
+         scaffold %C      26.03
+         scaffold %G      22.48
+         scaffold %T      26.74
+         scaffold %N       0.00
+ scaffold %non-ACGTN       0.00
+Number of scaffold non-ACGTN nt          0
+########################################################################################################
 ```
