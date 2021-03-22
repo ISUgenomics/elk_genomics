@@ -5,6 +5,16 @@
 ```
 /work/gif/remkv6/Olsen/Elk/09_MapRnaseq2Cattle
 
+#how many proteins total
+grep -c ">" imgtGENES.FASTA
+11440
+
+#how many proteins are nearly identical
+grep  ">" imgtGENES.FASTA |sed 's/|/\t/2' |awk '{print $1}' |sort|uniq|wc
+   8733    8733  192567
+
+
+
 This grabs only those protein names in Cattle (missing from elk), and cuts the names after the asterisk.  
 cat ElkBBH.out CowBBH.out CowBBH.out |cut -f 1 |sort |uniq -c |sort -rn |awk '$1==2 {print $2}'  |sed 's/\*/\\\*/1' |awk '{print $1}' |grep -f - CowBBH.out |awk '{if($10>$9) {print $2,$9,$10,$1}else {print $2,$10,$9,$1}}' |sort -k1,1 -k2,3n |tr " " "\t" |uniq|sed 's/\*/\t/g' |awk '{print $1,$2,$3,$4}' |less
 
@@ -340,7 +350,7 @@ Not found
 >NC_037348.1:208308-208401
 ###############################
 
-#Grab those 7 fastas with another 800bp on each side for mapping rnaseq
+#Grab those 7 fastas with another 80bp on each side for mapping rnaseq
 less Cattle20bpGeneExtractsMissing.blastout|awk '{print $1}' |grep -v -f - <(grep ">"  Cattle20bpGeneExtractsMissing.fasta) |sed 's/>//g' |sed 's/:/\t/g' |sed 's/-/\t/g' |awk '
 {print $1":"$2-80"-"$3+80}' |while read line ;do samtools faidx  GCF_002263795.1_ARS-UCD1.2_genomic.fna  $line; done >Cattle100bpGeneExtractsMissing.fasta
 ```
@@ -393,7 +403,7 @@ NC_037348.1:208228-208481       1       254
 
 
 
-#Fasta sequences of those that could not be found with tblastn, blastn, or blastn +20bp borders. Extracted with an additional 80bp+20bp+seq+2-bp+80bp so these regions might map whole reads to compete with the genome
+#Fasta sequences of those that could not be found with tblastn, blastn, or blastn +20bp borders. Extracted with an additional 80bp+20bp+seq+20bp+80bp so these regions might map whole reads to compete with the genome
 
 >NC_037337.1:22272985-22273081
 >NC_037337.1:22290520-22290619
@@ -477,9 +487,18 @@ NC_037348.1:208228-208481:1-254 0       0       0       0       0       0       
 #/home/rick.masonbrink/elk_bison_genomics/Masonbrink/33_MissingGenesPacbioAlignment
 ml minimap2/2.6;minimap2 -a -L -t 40 -x map-pb AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.fa  AllFastq.fastq >NamedAddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam
 ml subread; featureCounts -T 40 -M -O -t gene -g ID -a AddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.gff  -o NamedAddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES_counts_genes.txt NamedAddCattleFinalGenomePilonReducedSoftMaskedFINALSCAFFNAMES.sam
+```
+Output from subread
+```
+Total reads : 11068806
+Successfully assigned reads : 9 (0.0%)
+Assigned        9
+Unassigned_Ambiguity    0
+Unassigned_MultiMapping 0
+Unassigned_NoFeatures   10531408
+Unassigned_Unmapped     537389
 
-
-
+95.14% mapping rate and only 9 assigned subreads  
 ```
 
 
