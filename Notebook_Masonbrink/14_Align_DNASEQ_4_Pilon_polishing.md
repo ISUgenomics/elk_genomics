@@ -185,8 +185,7 @@ for f in *bam; do mkdir ${f%.*}_temp; done
 ```
 #use this to make script below
 ls -1 *reduced.bam |while read line;do echo "--frags "$line; done|tr "\n" " " |sed 's/$/\n/g'|awk '{print "java -Xmx120g -Djava.io.tmpdir=TEMP  -jar /
-software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.f
-a --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
+software/7/apps/pilon/1.23/pilon-1.23.jar --genome FinalGenome.fa "$0" --unpaired  FinalAssemblyFastaWithY.AllCCSReads_sorted.bam --output FinalGenomePilon.fa --outdir . --changes --fix all --threads 40 --chunksize 100000" }' |less
 
 
 #run scripts for pilon

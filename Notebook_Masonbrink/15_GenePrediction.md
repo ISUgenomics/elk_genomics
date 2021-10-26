@@ -1222,8 +1222,3 @@ less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+
 less Bos_ReddeerReduction.Expression.tab |awk '($2+$3+$4+$5+$6+$7+$8+$9+$10+$11+$12+$13)==0{print $1".1\t"$1}' >Bos_ReddeerReductionNoExpressionGene.list
 
 ```
-### Andrew's approach
-```
-
-
-```
